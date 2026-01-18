@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-VOTE | Leading Candidates</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/voter-dashboard.css">
+</head>
+
+<body>
+
+<div class="app-container">
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+        
+        <!-- TOP NAVIGATION BAR -->
+        <nav class="top-nav">
+            <div class="nav-header">
+                <h2>E-VOTE <span>Voter</span></h2>
+                <div class="user-info">
+                    <img class="profile-img-small" src="https://ui-avatars.com/api/?name=Juan+Dela+Cruz&background=FFC107&color=7b0000">
+                    <span class="user-name-small">Juan Dela Cruz</span>
+                </div>
+            </div>
+            <div class="nav-tabs">
+                <a href="/voter/home" class="nav-tab">
+                    <i class="fas fa-home"></i>
+                    <span>Home</span>
+                </a>
+                <a href="/voter/vote-now" class="nav-tab">
+                    <i class="fas fa-vote-yea"></i>
+                    <span>Vote Now</span>
+                </a>
+                <a href="/voter/leading" class="nav-tab active">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Leading</span>
+                </a>
+                <a href="/voter/voting-status" class="nav-tab">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Voting Status</span>
+                </a>
+                <button class="btn-logout-top"><i class="fas fa-sign-out-alt"></i> Logout</button>
+            </div>
+        </nav>
+
+        <!-- LEADING CANDIDATES CONTENT -->
+        <div class="content-section">
+            <h1 class="page-title">Leading Candidates</h1>
+
+            <div class="card">
+                <h3><i class="fas fa-graduation-cap"></i> Student Council - Current Results</h3>
+                
+                <div class="position-results">
+                    <h4>President</h4>
+                    <div class="result-item">
+                        <div class="candidate-result">
+                            <img src="https://ui-avatars.com/api/?name=Juan+Santos&background=7b0000&color=FFC107" class="result-img">
+                            <div class="result-info">
+                                <h5>Juan Santos</h5>
+                                <div class="vote-bar">
+                                    <div class="vote-progress" style="width: 65%"></div>
+                                </div>
+                                <span class="vote-count">156 votes (65%)</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="result-item">
+                        <div class="candidate-result">
+                            <img src="https://ui-avatars.com/api/?name=Maria+Cruz&background=7b0000&color=FFC107" class="result-img">
+                            <div class="result-info">
+                                <h5>Maria Cruz</h5>
+                                <div class="vote-bar">
+                                    <div class="vote-progress" style="width: 35%"></div>
+                                </div>
+                                <span class="vote-count">84 votes (35%)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="position-results">
+                    <h4>Vice President</h4>
+                    <div class="result-item">
+                        <div class="candidate-result">
+                            <img src="https://ui-avatars.com/api/?name=Pedro+Reyes&background=7b0000&color=FFC107" class="result-img">
+                            <div class="result-info">
+                                <h5>Pedro Reyes</h5>
+                                <div class="vote-bar">
+                                    <div class="vote-progress" style="width: 100%"></div>
+                                </div>
+                                <span class="vote-count">240 votes (100%)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="total-votes">
+                    <p><strong>Total Voters:</strong> 240 | <strong>Votes Cast:</strong> 240 (100%)</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3><i class="fas fa-chalkboard-teacher"></i> Faculty Association</h3>
+                <p class="no-results">Election has not started yet.</p>
+            </div>
+
+            <div class="card">
+                <h3><i class="fas fa-user-graduate"></i> Alumni Association</h3>
+                <p class="no-results">Election has ended. Final results available.</p>
+            </div>
+        </div>
+
+    </main>
+
+</div>
+
+</body>
+</html>

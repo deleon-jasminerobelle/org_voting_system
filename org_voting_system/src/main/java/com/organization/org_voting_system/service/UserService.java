@@ -24,8 +24,13 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public Optional<User> findByUsername(String username) {
+    public Optional<User> findByUsernameOptional(String username) {
         return userRepository.findByUsername(username);
+    }
+    
+    // Method for voter functionality
+    public User findByUsername(String username) {
+        return userRepository.findByUsername(username).orElse(null);
     }
 
     public Optional<User> findByEmail(String email) {
