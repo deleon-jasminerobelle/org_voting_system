@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terms of Service - E-VOTE System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --maroon: #7b0000;
+            --gold: #FFC107;
+            --bg: #f3f4f6;
+            --white: #ffffff;
+            --dark: #1f2937;
+        }
+
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+            font-family: 'Inter', sans-serif; 
+        }
+        
+        body { 
+            background: var(--bg); 
+            color: var(--dark); 
+        }
+
+        /* Navigation */
+        .navbar {
+            background: var(--maroon);
+            padding: 15px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            color: var(--white);
+        }
+
+        .logo span {
+            color: var(--gold);
+        }
+
+        .back-link {
+            color: var(--white);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.3s;
+        }
+
+        .back-link:hover {
+            color: var(--gold);
+        }
+
+        /* Content */
+        .container {
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 0 20px;
+        }
+
+        .terms-card {
+            background: var(--white);
+            padding: 50px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border-top: 5px solid var(--maroon);
+        }
+
+        .terms-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .terms-header h1 {
+            font-size: 36px;
+            color: var(--maroon);
+            margin-bottom: 10px;
+        }
+
+        .terms-header .date {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .section {
+            margin-bottom: 35px;
+        }
+
+        .section h2 {
+            font-size: 24px;
+            color: var(--maroon);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section h3 {
+            font-size: 18px;
+            color: var(--maroon);
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        .section p {
+            line-height: 1.8;
+            color: #374151;
+            margin-bottom: 15px;
+        }
+
+        .section ul {
+            margin-left: 25px;
+            margin-bottom: 15px;
+        }
+
+        .section li {
+            line-height: 1.8;
+            color: #374151;
+            margin-bottom: 8px;
+        }
+
+        .highlight-box {
+            background: #fee2e2;
+            border-left: 4px solid var(--maroon);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 6px;
+        }
+
+        .highlight-box p {
+            margin: 0;
+            color: #7f1d1d;
+        }
+
+        .info-box {
+            background: #dbeafe;
+            border-left: 4px solid #3b82f6;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 6px;
+        }
+
+        .info-box p {
+            margin: 0;
+            color: #1e3a8a;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--maroon);
+            color: var(--white);
+            padding: 30px 50px;
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 15px 20px;
+            }
+
+            .terms-card {
+                padding: 30px 20px;
+            }
+
+            .terms-header h1 {
+                font-size: 28px;
+            }
+
+            .section h2 {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="logo">E-VOTE <span>SYSTEM</span></div>
+        <a href="landing.html" class="back-link">
+            <i class="fas fa-arrow-left"></i> Back to Home
+        </a>
+    </nav>
+
+    <!-- Content -->
+    <div class="container">
+        <div class="terms-card">
+            <div class="terms-header">
+                <h1><i class="fas fa-file-contract"></i> Terms of Service</h1>
+                <p class="date">Last Updated: January 19, 2026</p>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-handshake"></i> Agreement to Terms</h2>
+                <p>Welcome to E-VOTE System. These Terms of Service ("Terms") constitute a legally binding agreement between you and E-VOTE System regarding your use of our online voting platform.</p>
+                <p>By accessing or using E-VOTE System, you agree to be bound by these Terms. If you do not agree to these Terms, you may not access or use the platform.</p>
+            </div>
+
+            <div class="highlight-box">
+                <p><strong><i class="fas fa-exclamation-triangle"></i> Important:</strong> By creating an account and using E-VOTE System, you acknowledge that you have read, understood, and agree to be bound by these Terms of Service and our Privacy Policy.</p>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-user-check"></i> Eligibility and Account Registration</h2>
+                
+                <h3>Eligibility Requirements</h3>
+                <p>To use E-VOTE System, you must:</p>
+                <ul>
+                    <li>Be a currently enrolled student or authorized member of the institution</li>
+                    <li>Have a valid student number issued by the institution</li>
+                    <li>Meet any additional eligibility requirements set by election administrators</li>
+                    <li>Be of legal voting age as specified by the institution's election rules</li>
+                    <li>Not be suspended or expelled from the institution</li>
+                </ul>
+
+                <h3>Account Registration</h3>
+                <p>When creating an account, you agree to:</p>
+                <ul>
+                    <li>Provide accurate, current, and complete information</li>
+                    <li>Maintain and promptly update your account information</li>
+                    <li>Keep your password secure and confidential</li>
+                    <li>Not share your account credentials with anyone</li>
+                    <li>Notify us immediately of any unauthorized access to your account</li>
+                    <li>Accept responsibility for all activities that occur under your account</li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-vote-yea"></i> Voting Rules and Conduct</h2>
+                
+                <h3>One Person, One Vote</h3>
+                <p>Each eligible voter is entitled to cast one vote per position in each election. Attempting to vote multiple times is strictly prohibited and may result in:</p>
+                <ul>
+                    <li>Immediate account suspension</li>
+                    <li>Invalidation of all votes cast</li>
+                    <li>Disciplinary action by the institution</li>
+                    <li>Legal consequences if applicable</li>
+                </ul>
+
+                <h3>Voting Period</h3>
+                <ul>
+                    <li>Votes must be cast within the designated election period</li>
+                    <li>Once submitted, votes cannot be changed or withdrawn</li>
+                    <li>Late votes will not be accepted after the election closes</li>
+                    <li>System maintenance may temporarily suspend voting access</li>
+                </ul>
+
+                <h3>Vote Integrity</h3>
+                <p>You agree to:</p>
+                <ul>
+                    <li>Cast your vote independently without coercion or influence</li>
+                    <li>Not sell, trade, or exchange your vote</li>
+                    <li>Not attempt to influence others' votes through improper means</li>
+                    <li>Not disclose how you voted if anonymity is required</li>
+                    <li>Report any suspected election fraud or irregularities</li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-ban"></i> Prohibited Activities</h2>
+                <p>You agree NOT to:</p>
+                <ul>
+                    <li><strong>Fraud:</strong> Engage in any form of election fraud or vote manipulation</li>
+                    <li><strong>Multiple Accounts:</strong> Create multiple accounts to cast additional votes</li>
+                    <li><strong>Impersonation:</strong> Impersonate another person or use someone else's credentials</li>
+                    <li><strong>Hacking:</strong> Attempt to hack, breach, or compromise system security</li>
+                    <li><strong>Interference:</strong> Interfere with the proper functioning of the platform</li>
+                    <li><strong>Data Mining:</strong> Use automated tools to extract data from the platform</li>
+                    <li><strong>Reverse Engineering:</strong> Reverse engineer or decompile any part of the system</li>
+                    <li><strong>Malicious Code:</strong> Upload viruses, malware, or other harmful code</li>
+                    <li><strong>Spam:</strong> Send unsolicited messages or spam to other users</li>
+                    <li><strong>Harassment:</strong> Harass, threaten, or intimidate other users or candidates</li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-shield-alt"></i> Security and Privacy</h2>
+                
+                <h3>Your Responsibilities</h3>
+                <ul>
+                    <li>Use a secure internet connection when voting</li>
+                    <li>Log out after completing your voting session</li>
+                    <li>Do not vote on public or shared computers</li>
+                    <li>Keep your password strong and unique</li>
+                    <li>Enable two-factor authentication if available</li>
+                </ul>
+
+                <h3>Our Responsibilities</h3>
+                <ul>
+                    <li>Maintain industry-standard security measures</li>
+                    <li>Protect your personal information as outlined in our Privacy Policy</li>
+                    <li>Ensure vote anonymity and confidentiality</li>
+                    <li>Monitor for suspicious activity and security threats</li>
+                    <li>Notify you of any security breaches affecting your account</li>
+                </ul>
+            </div>
+
+            <div class="info-box">
+                <p><strong><i class="fas fa-info-circle"></i> Data Protection:</strong> Your personal information and voting data are protected under our Privacy Policy. We use advanced encryption and security measures to ensure the integrity and confidentiality of all elections.</p>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-gavel"></i> Intellectual Property</h2>
+                <p>All content, features, and functionality of E-VOTE System, including but not limited to:</p>
+                <ul>
+                    <li>Software code and algorithms</li>
+                    <li>User interface design and graphics</li>
+                    <li>Logos, trademarks, and branding</li>
+                    <li>Text, images, and multimedia content</li>
+                    <li>Database structure and organization</li>
+                </ul>
+                <p>are owned by E-VOTE System or its licensors and are protected by copyright, trademark, and other intellectual property laws. You may not copy, modify, distribute, or create derivative works without explicit written permission.</p>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-exclamation-circle"></i> Disclaimer of Warranties</h2>
+                <p>E-VOTE System is provided "AS IS" and "AS AVAILABLE" without warranties of any kind, either express or implied, including but not limited to:</p>
+                <ul>
+                    <li>Warranties of merchantability or fitness for a particular purpose</li>
+                    <li>Warranties that the service will be uninterrupted or error-free</li>
+                    <li>Warranties regarding the accuracy or reliability of results</li>
+                    <li>Warranties that security measures will prevent all unauthorized access</li>
+                </ul>
+                <p>We do not guarantee that the platform will be available at all times or that it will be free from technical issues, though we strive to maintain high availability and reliability.</p>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-balance-scale"></i> Limitation of Liability</h2>
+                <p>To the maximum extent permitted by law, E-VOTE System and its operators shall not be liable for:</p>
+                <ul>
+                    <li>Any indirect, incidental, special, or consequential damages</li>
+                    <li>Loss of data, votes, or election results due to technical failures</li>
+                    <li>Damages resulting from unauthorized access to your account</li>
+                    <li>Interruption of service or inability to vote</li>
+                    <li>Errors or inaccuracies in election results</li>
+                    <li>Actions of third parties or other users</li>
+                </ul>
+                <p>Our total liability shall not exceed the amount you paid to use the service (if any).</p>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-user-slash"></i> Account Suspension and Termination</h2>
+                
+                <h3>We May Suspend or Terminate Your Account If:</h3>
+                <ul>
+                    <li>You violate these Terms of Service</li>
+                    <li>You engage in fraudulent or illegal activities</li>
+                    <li>You attempt to compromise system security</li>
+                    <li>You are no longer eligible to vote (e.g., graduation, expulsion)</li>
+                    <li>We are required to do so by law or court order</li>
+                    <li>We detect suspicious or unauthorized activity</li>
+                </ul>
+
+                <h3>You May Terminate Your Account By:</h3>
+                <ul>
+                    <li>Contacting our support team</li>
+                    <li>Following the account deletion process in your settings</li>
+                </ul>
+
+                <h3>Effects of Termination:</h3>
+                <ul>
+                    <li>Your access to the platform will be immediately revoked</li>
+                    <li>Your personal information will be deleted (subject to legal retention requirements)</li>
+                    <li>Anonymized voting records will be retained for election integrity</li>
+                    <li>You may not create a new account without permission</li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-comments"></i> Dispute Resolution</h2>
+                
+                <h3>Election Disputes</h3>
+                <p>If you believe there has been an error or irregularity in an election:</p>
+                <ul>
+                    <li>Contact the election administrator within 48 hours of the election closing</li>
+                    <li>Provide specific details and evidence of the alleged issue</li>
+                    <li>The election committee will investigate and respond within 5 business days</li>
+                    <li>Decisions of the election committee are final and binding</li>
+                </ul>
+
+                <h3>Service Disputes</h3>
+                <p>For disputes regarding the platform or these Terms:</p>
+                <ul>
+                    <li>First, attempt to resolve the issue by contacting our support team</li>
+                    <li>If unresolved, disputes will be handled through the institution's dispute resolution process</li>
+                    <li>Both parties agree to act in good faith to resolve disputes amicably</li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-globe"></i> Governing Law</h2>
+                <p>These Terms shall be governed by and construed in accordance with the laws of the jurisdiction where the institution is located, without regard to its conflict of law provisions.</p>
+                <p>You agree to submit to the exclusive jurisdiction of the courts in that jurisdiction for the resolution of any disputes.</p>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-sync-alt"></i> Changes to Terms</h2>
+                <p>We reserve the right to modify these Terms at any time. When we make changes:</p>
+                <ul>
+                    <li>We will post the updated Terms on the platform</li>
+                    <li>We will update the "Last Updated" date at the top</li>
+                    <li>We will notify users via email for material changes</li>
+                    <li>Continued use of the platform after changes constitutes acceptance</li>
+                </ul>
+                <p>If you do not agree to the modified Terms, you must stop using the platform and may request account deletion.</p>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-clipboard-list"></i> Miscellaneous</h2>
+                
+                <h3>Severability</h3>
+                <p>If any provision of these Terms is found to be unenforceable, the remaining provisions will continue in full force and effect.</p>
+
+                <h3>Waiver</h3>
+                <p>Our failure to enforce any right or provision of these Terms will not be considered a waiver of those rights.</p>
+
+                <h3>Entire Agreement</h3>
+                <p>These Terms, together with our Privacy Policy, constitute the entire agreement between you and E-VOTE System regarding the use of the platform.</p>
+
+                <h3>Assignment</h3>
+                <p>You may not assign or transfer these Terms without our written consent. We may assign these Terms without restriction.</p>
+
+                <h3>Force Majeure</h3>
+                <p>We shall not be liable for any failure to perform due to circumstances beyond our reasonable control, including natural disasters, war, terrorism, riots, embargoes, acts of civil or military authorities, fire, floods, accidents, pandemics, strikes, or shortages of transportation facilities, fuel, energy, labor, or materials.</p>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-envelope"></i> Contact Information</h2>
+                <p>If you have questions about these Terms of Service, please contact us:</p>
+                <ul>
+                    <li><strong>Email:</strong> support@evote-system.edu</li>
+                    <li><strong>Legal Department:</strong> legal@evote-system.edu</li>
+                    <li><strong>Election Support:</strong> elections@evote-system.edu</li>
+                    <li><strong>Address:</strong> E-VOTE System Administration Office</li>
+                </ul>
+            </div>
+
+            <div class="highlight-box">
+                <p><strong><i class="fas fa-check-circle"></i> Acknowledgment:</strong> By using E-VOTE System, you acknowledge that you have read these Terms of Service, understand them, and agree to be bound by them. Thank you for helping us maintain a fair, secure, and transparent election process.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2026 E-VOTE System. All rights reserved.</p>
+    </footer>
+
+</body>
+</html>
