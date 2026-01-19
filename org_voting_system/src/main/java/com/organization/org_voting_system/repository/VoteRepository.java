@@ -12,9 +12,9 @@ import java.util.Optional;
 @Repository
 public interface VoteRepository extends JpaRepository<Vote, Long> {
 
-    Optional<Vote> findByUserAndElection(User user, Election election);
+    Optional<Vote> findByVoterAndElection(User voter, Election election);
 
     List<Vote> findByElection(Election election);
 
-    boolean existsByUserAndElection(User user, Election election);
+    boolean existsByVoterAndElection(User voter, Election election);
 }

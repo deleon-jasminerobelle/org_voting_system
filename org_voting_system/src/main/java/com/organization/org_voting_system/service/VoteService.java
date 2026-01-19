@@ -27,7 +27,7 @@ public class VoteService {
         }
 
         // Check if user has already voted in this election for this position
-        if (voteRepository.existsByUserAndElection(user, election)) {
+        if (voteRepository.existsByVoterAndElection(user, election)) {
             throw new Exception("User has already voted in this election");
         }
 
@@ -44,7 +44,7 @@ public class VoteService {
     }
 
     public boolean hasUserVoted(User user, Election election) {
-        return voteRepository.existsByUserAndElection(user, election);
+        return voteRepository.existsByVoterAndElection(user, election);
     }
 
     private String generateHash(String data) throws NoSuchAlgorithmException {
