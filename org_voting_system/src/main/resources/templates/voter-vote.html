@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-VOTE VOTER SYSTEM - Vote Now</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --maroon: #7b0000;
+            --gold: #FFC107;
+            --bg: #f3f4f6;
+            --white: #ffffff;
+            --danger: #ef4444;
+        }
+
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+            font-family: 'Inter', sans-serif; 
+        }
+        
+        body { 
+            background: var(--bg); 
+            color: #374151; 
+            overflow: hidden; 
+        }
+        
+        .app-container { 
+            display: flex; 
+            height: 100vh; 
+        }
+
+        .sidebar { 
+            width: 270px; background: var(--maroon); 
+            color: white; 
+            border-right: 5px solid var(--gold);
+            display: flex; 
+            flex-direction: column; 
+        }
+        
+        .sidebar-header { 
+            padding: 25px 20px; 
+            text-align: center; 
+        }
+        
+        .sidebar-header h2 span { 
+            color: var(--gold); 
+        }
+
+        .voter-profile {
+            padding: 20px; text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            background: rgba(0,0,0,0.1);
+        }
+        
+        .profile-img {
+            width: 80px; height: 80px; border-radius: 50%;
+            border: 3px solid var(--gold); margin-bottom: 10px; object-fit: cover;
+        }
+        
+        .voter-name { 
+            font-weight: bold; 
+            font-size: 16px; 
+            display: block; 
+        }
+        
+        .voter-id { 
+            font-size: 11px; 
+            color: var(--gold); 
+            text-transform: uppercase; 
+            letter-spacing: 1px; 
+        }
+
+        .nav-links { 
+            flex-grow: 1; 
+            margin-top: 10px; 
+        }
+        
+        .nav-item { 
+            padding: 15px 30px; 
+            cursor: pointer; 
+            display: flex;
+            align-items: center; 
+            gap: 12px; 
+            font-size: 14px; 
+            transition: 0.3s; opacity: 0.8;
+        }
+        
+        .nav-item:hover, .nav-item.active {
+            opacity: 1; 
+            background: rgba(0,0,0,0.15); 
+            color: var(--gold); 
+        }
+        
+        .nav-item.active { 
+            border-left: 5px solid var(--gold); 
+            font-weight: bold; 
+        }
+
+        .logout-section { 
+            padding: 20px; 
+            border-top: 1px solid rgba(255,255,255,0.1); 
+        }
+
+        .btn-logout {
+            width: 100%; 
+            padding: 12px;
+            background: rgba(255,255,255,0.1); 
+            color: white;
+            border: 1px solid rgba(255,255,255,0.2); 
+            border-radius: 6px;
+            cursor: pointer; 
+            display: flex; 
+            align-items: center;
+            justify-content: center; 
+            gap: 10px; 
+            transition: 0.3s;
+        }
+        .btn-logout:hover { 
+            background: var(--danger); 
+            border-color: var(--danger); 
+        }
+
+        .main-content { 
+            flex: 1; 
+            padding: 30px; 
+            overflow-y: auto; 
+        }
+       
+        .page-title { 
+            font-size: 24px; 
+            margin-bottom: 25px; 
+            border-left: 5px solid var(--maroon);
+            padding-left: 15px; 
+        }
+
+        .card { 
+            background: white; 
+            padding: 20px; 
+            border-radius: 12px; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05); 
+            margin-bottom: 20px; 
+        }
+        
+        .card-title { 
+            font-size: 14px; 
+            color: var(--maroon); 
+            margin-bottom: 15px; 
+            text-transform: uppercase; 
+            font-weight: bold; 
+        }
+
+        .modal-overlay {
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6); 
+            display: none;
+            justify-content: center; 
+            align-items: center; 
+            z-index: 9999;
+        }
+        
+        .logout-modal, .confirm-modal {
+            background: white; 
+            padding: 30px; 
+            border-radius: 12px;
+            width: 380px; 
+            text-align: center; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            animation: modalPop 0.3s ease-out;
+        }
+      
+        @keyframes modalPop { 
+            from { 
+                transform: scale(0.8); 
+                opacity: 0; 
+            } 
+            to { 
+                transform: scale(1); 
+                opacity: 1; 
+            } 
+        }
+       
+        .modal-icon { 
+            font-size: 50px; 
+            margin-bottom: 15px; 
+        }
+
+        .modal-icon.danger {
+            color: var(--danger);
+        }
+
+        .modal-icon.success {
+            color: #10b981;
+        }
+        
+        .modal-title { 
+            font-size: 20px; 
+            font-weight: bold; 
+            color: #1f2937; 
+            margin-bottom: 10px; 
+        }
+        
+        .modal-text { 
+            font-size: 14px; 
+            color: #6b7280; 
+            line-height: 1.5; 
+            margin-bottom: 25px; 
+        }
+        
+        .modal-btns { 
+            display: flex; 
+            gap: 12px; 
+            justify-content: center; 
+        }
+        
+        .btn-no { 
+            padding: 10px 20px; 
+            border-radius: 6px; 
+            border: 1px solid #d1d5db; 
+            background: white; 
+            cursor: pointer; 
+            font-weight: 600; 
+            flex: 1; 
+        }
+        
+        .btn-yes { 
+            padding: 10px 20px; 
+            border-radius: 6px; 
+            border: none; 
+            background: var(--danger); 
+            color: white; 
+            cursor: pointer; 
+            font-weight: 600; 
+            flex: 1; 
+        }
+
+        .btn-primary { 
+            background: var(--maroon); 
+            color: white; 
+            border: none; 
+            padding: 12px 20px; 
+            border-radius: 6px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            transition: 0.3s;
+        }
+
+        .btn-primary:hover {
+            background: #5a0000;
+        }
+
+        .position-section {
+            margin-bottom: 30px;
+        }
+
+        .position-header {
+            background: var(--maroon);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px 8px 0 0;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .candidates-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 15px;
+            padding: 20px;
+            background: white;
+            border-radius: 0 0 8px 8px;
+        }
+
+        .candidate-card {
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .candidate-card:hover {
+            border-color: var(--maroon);
+            box-shadow: 0 4px 12px rgba(123, 0, 0, 0.1);
+        }
+
+        .candidate-card.selected {
+            border-color: var(--maroon);
+            background: #fef2f2;
+            box-shadow: 0 4px 12px rgba(123, 0, 0, 0.2);
+        }
+
+        .candidate-img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 3px solid var(--gold);
+            margin-bottom: 15px;
+            object-fit: cover;
+        }
+
+        .candidate-name {
+            font-size: 16px;
+            font-weight: bold;
+            color: var(--maroon);
+            margin-bottom: 5px;
+        }
+
+        .candidate-party {
+            font-size: 12px;
+            color: #6b7280;
+            margin-bottom: 10px;
+        }
+
+        .select-indicator {
+            display: none;
+            color: var(--maroon);
+            font-size: 14px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .candidate-card.selected .select-indicator {
+            display: block;
+        }
+
+        .vote-actions {
+            position: sticky;
+            bottom: 0;
+            background: white;
+            padding: 20px;
+            border-top: 2px solid #e5e7eb;
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            box-shadow: 0 -4px 6px rgba(0,0,0,0.05);
+        }
+
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-secondary:hover {
+            background: #4b5563;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="modal-overlay" id="logoutModal">
+        <div class="logout-modal">
+            <i class="fas fa-exclamation-circle modal-icon danger"></i>
+            <div class="modal-title">Logout Confirmation</div>
+            <p class="modal-text">Are you sure you want to log out?</p>
+            <div class="modal-btns">
+                <button class="btn-no" onclick="closeLogoutModal()">Cancel</button>
+                <button class="btn-yes" onclick="confirmLogout()">Yes, Logout</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="confirmVoteModal">
+        <div class="confirm-modal">
+            <i class="fas fa-check-circle modal-icon success"></i>
+            <div class="modal-title">Confirm Your Vote</div>
+            <p class="modal-text">Are you sure you want to submit your vote? This action cannot be undone.</p>
+            <div class="modal-btns">
+                <button class="btn-no" onclick="closeConfirmModal()">Cancel</button>
+                <button class="btn-yes" style="background: #10b981;" onclick="submitVote()">Confirm Vote</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-header"><h2>E-VOTE <span>VOTER</span></h2></div>
+            <div class="voter-profile">
+                <img src="https://ui-avatars.com/api/?name=Juan+Dela+Cruz&background=FFC107&color=7b0000" class="profile-img">
+                <span class="voter-name">Juan Dela Cruz</span>
+                <span class="voter-id">Student ID: 2024-001</span>
+            </div>
+            <nav class="nav-links">
+                <div class="nav-item" onclick="location.href='voter-dashboard.html'"><i class="fas fa-home"></i> Dashboard</div>
+                <div class="nav-item active"><i class="fas fa-vote-yea"></i> Vote Now</div>
+                <div class="nav-item" onclick="location.href='voter-leading.html'"><i class="fas fa-chart-line"></i> Leading</div>
+            </nav>
+            <div class="logout-section">
+                <button class="btn-logout" onclick="openLogoutModal()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <h1 class="page-title" th:text="${election != null ? election.title : 'Vote Now'}">Vote Now</h1>
+            
+            <div class="card" style="margin-bottom: 15px;" th:if="${election != null}">
+                <p><i class="fas fa-info-circle" style="color: var(--maroon);"></i> <strong>Election Period:</strong> <span th:text="${election.startDate + ' - ' + election.endDate}"></span></p>
+                <p style="margin-top: 8px; color: #6b7280;">Select one candidate for each position. Click on a candidate card to select them.</p>
+            </div>
+
+            <!-- Dynamic Position Sections -->
+            <div class="position-section" th:each="position : ${positions}">
+                <div class="position-header">
+                    <i class="fas fa-user-tie"></i> <span th:text="${position.name}">Position</span>
+                </div>
+                <div class="candidates-grid">
+                    <div class="candidate-card" th:each="candidate : ${position.candidates}" 
+                         th:onclick="'selectCandidate(this, \'' + ${position.id} + '\')'"
+                         th:attr="data-candidate-id=${candidate.id}">
+                        <img th:src="'https://ui-avatars.com/api/?name=' + ${candidate.name} + '&background=FFC107&color=7b0000&size=100'" 
+                             class="candidate-img" th:alt="${candidate.name}">
+                        <div class="candidate-name" th:text="${candidate.name}">Candidate Name</div>
+                        <div class="candidate-party" th:text="${candidate.party}">Party</div>
+                        <div class="select-indicator"><i class="fas fa-check-circle"></i> Selected</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="vote-actions">
+                <button class="btn-secondary" onclick="location.href='voter-dashboard.html'">Cancel</button>
+                <button class="btn-primary" onclick="openConfirmModal()"><i class="fas fa-paper-plane"></i> Submit Vote</button>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        let selectedVotes = {};
+
+        function selectCandidate(card, positionId) {
+            const positionCards = card.parentElement.querySelectorAll('.candidate-card');
+            positionCards.forEach(c => c.classList.remove('selected'));
+            card.classList.add('selected');
+            selectedVotes[positionId] = card.getAttribute('data-candidate-id');
+        }
+
+        function openLogoutModal() { document.getElementById('logoutModal').style.display = 'flex'; }
+        function closeLogoutModal() { document.getElementById('logoutModal').style.display = 'none'; }
+        function confirmLogout() { window.location.href = '/login'; }
+
+        function openConfirmModal() {
+            const totalPositions = document.querySelectorAll('.position-section').length;
+            if (Object.keys(selectedVotes).length < totalPositions) {
+                alert('Please select a candidate for all positions before submitting.');
+                return;
+            }
+            document.getElementById('confirmVoteModal').style.display = 'flex';
+        }
+
+        function closeConfirmModal() { document.getElementById('confirmVoteModal').style.display = 'none'; }
+        
+        function submitVote() {
+            // Submit votes to backend
+            fetch('/api/vote/submit', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(selectedVotes)
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert('Vote submitted successfully!');
+                window.location.href = 'voter-dashboard.html';
+            })
+            .catch(error => {
+                alert('Error submitting vote. Please try again.');
+                console.error('Error:', error);
+            });
+        }
+    </script>
+</body>
+</html>
