@@ -23,6 +23,19 @@ public class UserService {
         return userRepository.findByStudentNumber(studentNumber);
     }
 
+    public Optional<User> findByUsernameOptional(String username) {
+        return userRepository.findByUsername(username);
+    }
+    
+    // Method for voter functionality
+    public User findByUsername(String username) {
+        return userRepository.findByUsername(username).orElse(null);
+    }
+
+    public Optional<User> findByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-VOTE | Home</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/voter-dashboard.css">
+</head>
+
+<body>
+
+<div class="app-container">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h2>E-VOTE <span>Voter</span></h2>
+        </div>
+
+        <div class="user-profile">
+            <img class="profile-img" src="https://ui-avatars.com/api/?name=Juan+Dela+Cruz&background=FFC107&color=7b0000">
+            <div class="user-name">Juan Dela Cruz</div>
+            <div class="user-role">Voter</div>
+        </div>
+
+        <nav class="nav-links">
+            <a href="/voter/home" class="nav-item active">
+                <i class="fas fa-home"></i> Home
+            </a>
+            <a href="/voter/vote-now" class="nav-item">
+                <i class="fas fa-vote-yea"></i> Vote Now
+            </a>
+            <a href="/voter/leading" class="nav-item">
+                <i class="fas fa-chart-bar"></i> Leading
+            </a>
+            <a href="/voter/voting-status" class="nav-item">
+                <i class="fas fa-check-circle"></i> Voting Status
+            </a>
+        </nav>
+
+        <div class="logout-section">
+            <a href="/logout" class="btn-logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+        <div class="content-section">
+            <h1 class="page-title">Welcome to E-Vote System</h1>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-vote-yea"></i></div>
+                    <div class="stat-info">
+                        <h3>3</h3>
+                        <p>Active Elections</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-users"></i></div>
+                    <div class="stat-info">
+                        <h3>5</h3>
+                        <p>Organizations</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+                    <div class="stat-info">
+                        <h3>2</h3>
+                        <p>Votes Cast</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card election-info-card">
+                <h3 class="card-title"><i class="fas fa-info-circle"></i> Election Information</h3>
+                <div class="election-info-content">
+                    <p class="welcome-text">Welcome to the Organization Voting System. Here you can participate in elections for different organizations you belong to.</p>
+                    <ul class="info-list">
+                        <li><i class="fas fa-eye"></i> View active elections by organization</li>
+                        <li><i class="fas fa-vote-yea"></i> Cast your vote securely</li>
+                        <li><i class="fas fa-chart-bar"></i> Check leading candidates</li>
+                        <li><i class="fas fa-check-circle"></i> Track your voting status</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </main>
+
+</div>
+
+</body>
+</html>

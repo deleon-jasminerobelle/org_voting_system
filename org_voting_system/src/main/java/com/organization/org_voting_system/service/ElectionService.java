@@ -55,4 +55,19 @@ public class ElectionService {
             electionRepository.save(election);
         }
     }
+    
+    // Additional methods for voter functionality
+    public List<Election> getActiveElections() {
+        updateElectionStatuses(); // Ensure statuses are current
+        return electionRepository.findByStatus(Election.Status.ACTIVE);
+    }
+    
+    public List<Election> getUpcomingElections() {
+        updateElectionStatuses(); // Ensure statuses are current
+        return electionRepository.findByStatus(Election.Status.UPCOMING);
+    }
+    
+    public Election findById(Long id) {
+        return electionRepository.findById(id).orElse(null);
+    }
 }
