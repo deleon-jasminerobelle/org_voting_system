@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Election Officer Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background-color: #f4f6f8;
+    }
+    .sidebar {
+      width: 240px;
+      height: 100vh;
+      background-color: #1f2937;
+      color: #fff;
+      position: fixed;
+      padding: 20px;
+    }
+    .sidebar h2 {
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 18px;
+    }
+    .sidebar a {
+      display: block;
+      color: #d1d5db;
+      padding: 12px;
+      text-decoration: none;
+      border-radius: 6px;
+      margin-bottom: 8px;
+    }
+    .sidebar a:hover {
+      background-color: #374151;
+      color: #fff;
+    }
+    .main {
+      margin-left: 260px;
+      padding: 30px;
+    }
+    .header {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .header h1 {
+      margin: 0;
+      font-size: 22px;
+    }
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+    }
+    .card {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    .card h3 {
+      margin-top: 0;
+      font-size: 16px;
+      color: #374151;
+    }
+    .card p {
+      font-size: 14px;
+      color: #6b7280;
+    }
+    .table-container {
+      margin-top: 30px;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      text-align: left;
+      padding: 12px;
+      border-bottom: 1px solid #e5e7eb;
+      font-size: 14px;
+    }
+    th {
+      background-color: #f9fafb;
+    }
+    .status-open {
+      color: green;
+      font-weight: bold;
+    }
+    .status-closed {
+      color: red;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="sidebar">
+    <h2>Voting System</h2>
+    <a href="#">Dashboard</a>
+    <a href="#">Monitor Elections</a>
+    <a href="#">Verify Voters</a>
+    <a href="#">View Audit Logs</a>
+    <a href="#">Reports</a>
+    <a href="#">Logout</a>
+  </div>
+
+  <div class="main">
+    <div class="header">
+      <h1>Election Officer Dashboard</h1>
+      <p>Monitor elections, verify voters, and ensure secure voting.</p>
+    </div>
+
+    <div class="cards">
+      <div class="card">
+        <h3>Active Elections</h3>
+        <p>2 ongoing elections</p>
+      </div>
+      <div class="card">
+        <h3>Total Voters</h3>
+        <p>350 registered voters</p>
+      </div>
+      <div class="card">
+        <h3>Votes Cast</h3>
+        <p>210 votes submitted</p>
+      </div>
+      <div class="card">
+        <h3>Security Alerts</h3>
+        <p>No issues detected</p>
+      </div>
+    </div>
+
+    <div class="table-container">
+      <h3>Election Status</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Election Name</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Student Council Election</td>
+            <td>Aug 10, 2026</td>
+            <td>Aug 12, 2026</td>
+            <td class="status-open">OPEN</td>
+          </tr>
+          <tr>
+            <td>Organization Officers</td>
+            <td>Aug 01, 2026</td>
+            <td>Aug 03, 2026</td>
+            <td class="status-closed">CLOSED</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</body>
+</html>
