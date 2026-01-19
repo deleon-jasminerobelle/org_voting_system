@@ -2,49 +2,265 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Register - Organization Voting System</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Register to Cast Your Vote - E-VOTE</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --maroon: #7b0000;
+            --gold: #FFC107;
+            --bg: #f3f4f6;
+            --white: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: var(--bg);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .register-container {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            width: 100%;
+            max-width: 700px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 3px solid var(--maroon);
+            padding-bottom: 20px;
+        }
+
+        .header h2 {
+            font-size: 28px;
+            color: var(--maroon);
+            margin-bottom: 5px;
+        }
+
+        .header h2 span {
+            color: var(--gold);
+        }
+
+        .subtitle {
+            color: #6b7280;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .alert {
+            padding: 12px 15px;
+            margin-bottom: 20px;
+            border-radius: 6px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .alert-error {
+            background-color: #fee;
+            color: #c33;
+            border: 1px solid #fcc;
+        }
+
+        .alert-success {
+            background-color: #efe;
+            color: #3c3;
+            border: 1px solid #cfc;
+        }
+
+        .form-section {
+            margin-bottom: 25px;
+        }
+
+        .section-title {
+            font-size: 12px;
+            color: var(--maroon);
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            font-size: 13px;
+            color: #374151;
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+
+        label .required {
+            color: var(--maroon);
+        }
+
+        input[type="text"],
+        input[type="date"] {
+            padding: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus,
+        input[type="date"]:focus {
+            outline: none;
+            border-color: var(--maroon);
+        }
+
+        input::placeholder {
+            color: #9ca3af;
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 14px;
+            background: var(--maroon);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-primary:hover {
+            background: #5a0000;
+        }
+
+        .info-box {
+            background: #fef3c7;
+            border-left: 4px solid var(--gold);
+            padding: 12px 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: #92400e;
+        }
+
+        .info-box i {
+            margin-right: 8px;
+            color: var(--gold);
+        }
+
+        @media (max-width: 600px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
-    <div class="container mt-5">
-        <div class="row justify-content-center">
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-header">
-                        <h3>Register</h3>
+    <div class="register-container">
+        <div class="header">
+            <h2>E-VOTE <span>SYSTEM</span></h2>
+            <p class="subtitle">Voter Registration</p>
+        </div>
+
+        <div th:if="${error != null and error != ''}" class="alert alert-error">
+            <i class="fas fa-exclamation-circle"></i>
+            <span th:text="${error}"></span>
+        </div>
+
+        <div th:if="${success != null and success != ''}" class="alert alert-success">
+            <i class="fas fa-check-circle"></i>
+            <span th:text="${success}"></span>
+        </div>
+
+        <div class="info-box">
+            <i class="fas fa-info-circle"></i>
+            Please fill out all required fields to register as a voter.
+        </div>
+
+        <form th:action="@{/register}" method="post">
+            <div class="form-section">
+                <div class="section-title">Personal Information</div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="firstName">First Name <span class="required">*</span></label>
+                        <input type="text" id="firstName" name="firstName" required>
                     </div>
-                    <div class="card-body">
-                        <form th:action="@{/register}" method="post">
-                            <div class="mb-3">
-                                <label for="username" class="form-label">Username</label>
-                                <input type="text" class="form-control" id="username" name="username" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="email" class="form-label">Email</label>
-                                <input type="email" class="form-control" id="email" name="email" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="password" class="form-label">Password</label>
-                                <input type="password" class="form-control" id="password" name="password" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="role" class="form-label">Role</label>
-                                <select class="form-select" id="role" name="role" required>
-                                    <option value="VOTER">Voter</option>
-                                    <option value="ELECTION_OFFICER">Election Officer</option>
-                                </select>
-                            </div>
-                            <button type="submit" class="btn btn-primary">Register</button>
-                        </form>
-                        <div th:if="${error}" class="alert alert-danger mt-3" th:text="${error}"></div>
-                        <div class="mt-3">
-                            <a href="/login">Already have an account? Login</a>
-                        </div>
+                    
+                    <div class="form-group">
+                        <label for="middleName">Middle Name</label>
+                        <input type="text" id="middleName" name="middleName">
+                    </div>
+                </div>
+
+                <div class="form-group full-width">
+                    <label for="lastName">Last Name <span class="required">*</span></label>
+                    <input type="text" id="lastName" name="lastName" required>
+                </div>
+
+                <div class="form-group full-width">
+                    <label for="birthdate">Birthdate <span class="required">*</span></label>
+                    <input type="date" id="birthdate" name="birthdate" required>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <div class="section-title">Student Information</div>
+                
+                <div class="form-group full-width">
+                    <label for="Student Number">Student Number <span class="required">*</span></label>
+                    <input type="text" name="Student Number" required maxlength="12" pattern="[0-9]{12}" 
+                          
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="organization">Organization <span class="required">*</span></label>
+                        <input type="text" id="organization" name="organization" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="section">Section <span class="required">*</span></label>
+                        <input type="text" id="section" name="section" required>
                     </div>
                 </div>
             </div>
-        </div>
+
+            <button type="submit" class="btn-primary">
+                <i class="fas fa-user-plus"></i>
+                Register as Voter
+            </button>
+        </form>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

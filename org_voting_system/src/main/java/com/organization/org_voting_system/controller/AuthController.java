@@ -16,11 +16,6 @@ public class AuthController {
     @Autowired
     private UserService userService;
 
-    @GetMapping("/login")
-    public String login() {
-        return "login";
-    }
-
     @GetMapping("/register")
     public String registerForm(Model model) {
         model.addAttribute("user", new User());
@@ -30,18 +25,15 @@ public class AuthController {
     @PostMapping("/register")
     public String register(User user, Model model) {
         try {
-            if (userService.existsByUsername(user.getUsername())) {
-                model.addAttribute("error", "Username already exists");
-                return "register";
-            }
-            if (userService.existsByEmail(user.getEmail())) {
-                model.addAttribute("error", "Email already exists");
+            if (userService.existsByStudentNumber(user.getStudentNumber())) {
+                model.addAttribute("error", "Student Number already registered");
                 return "register";
             }
             userService.registerUser(user);
-            return "redirect:/login?registered";
+            model.addAttribute("success", "Registration successful!");
+            return "register";
         } catch (Exception e) {
-            model.addAttribute("error", "Registration failed");
+            model.addAttribute("error", "Registration failed: " + e.getMessage());
             return "register";
         }
     }
