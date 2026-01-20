@@ -4,7 +4,6 @@ import java.security.Principal;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,7 +16,7 @@ import com.organization.org_voting_system.service.UserService;
 
 @Controller
 @RequestMapping("/election-officer")
-@PreAuthorize("hasRole('ELECTION_OFFICER')")
+// @PreAuthorize("hasRole('ELECTION_OFFICER')")
 public class ElectionOfficerController {
 
     @Autowired
@@ -38,6 +37,6 @@ public class ElectionOfficerController {
         model.addAttribute("user", currentUser);
         model.addAttribute("allElections", allElections);
 
-        return "election-officer.html";
+        return "election_officer.html";
     }
 }

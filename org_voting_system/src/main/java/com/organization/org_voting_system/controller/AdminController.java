@@ -4,7 +4,6 @@ import java.security.Principal;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,7 +16,7 @@ import com.organization.org_voting_system.service.UserService;
 
 @Controller
 @RequestMapping("/admin")
-@PreAuthorize("hasRole('ADMIN')")
+// @PreAuthorize("hasRole('ADMIN')")
 public class AdminController {
 
     @Autowired
@@ -28,9 +27,13 @@ public class AdminController {
 
     @GetMapping("/dashboard")
     public String dashboard(Model model, Principal principal) {
-        User currentUser = userService.findByUsername(principal.getName());
+        User currentUser = userService.findByUsernameOptional(principal.getName())
+            .orElse(userService.findByEmail(principal.getName()).orElse(null));
         if (currentUser == null) {
             return "redirect:/login?error=user_not_found";
+        }
+        if (Boolean.FALSE.equals(currentUser.getIsActive())) {
+            return "redirect:/login?error=user_inactive";
         }
 
         List<Election> allElections = electionService.findAll();

@@ -30,9 +30,9 @@ public class UserService {
         String middleName = user.getMiddleName();
         String lastName = user.getLastName() != null ? user.getLastName() : "";
         user.setFullName(firstName + (middleName != null && !middleName.trim().isEmpty() ? " " + middleName : "") + " " + lastName);
-        Role voterRole = roleRepository.findByName("VOTER");
+        Role voterRole = roleRepository.findByName("ROLE_VOTER");
         if (voterRole == null) {
-            voterRole = new Role(Role.RoleName.VOTER);
+            voterRole = new Role(Role.RoleName.ROLE_VOTER);
             roleRepository.save(voterRole);
         }
         user.setRole(voterRole);

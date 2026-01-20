@@ -6,22 +6,41 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 @Component
-public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
+public class CustomAuthenticationSuccessHandler
+        implements AuthenticationSuccessHandler {
 
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-            Authentication authentication) throws IOException, ServletException {
-        String role = authentication.getAuthorities().iterator().next().getAuthority();
-        switch (role) {
-            case "ROLE_VOTER" -> response.sendRedirect("/voter/dashboard");
-            case "ROLE_ADMIN" -> response.sendRedirect("/admin/dashboard");
-            case "ROLE_ELECTION_OFFICER" -> response.sendRedirect("/election-officer/dashboard");
-            default -> response.sendRedirect("/");
+    public void onAuthenticationSuccess(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Authentication authentication) throws IOException {
+
+        authentication.getAuthorities().forEach(a ->
+            System.out.println("AUTHORITY: " + a.getAuthority())
+        );
+
+        if (authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
+            response.sendRedirect("/admin/dashboard");
+            return;
         }
+
+        if (authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_VOTER"))) {
+            response.sendRedirect("/voter/dashboard");
+            return;
+        }
+
+        if (authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ELECTION_OFFICER"))) {
+            response.sendRedirect("/election-officer/dashboard");
+            return;
+        }
+
+        response.sendRedirect("/login?error=role");
     }
 }

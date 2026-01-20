@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,7 +23,7 @@ import com.organization.org_voting_system.service.VoteService;
 
 @Controller
 @RequestMapping("/voter")
-@PreAuthorize("hasRole('VOTER')")
+// @PreAuthorize("hasRole('VOTER')")
 public class VoterController {
 
     @Autowired
@@ -100,9 +99,17 @@ public class VoterController {
         List<Election> activeElections = electionService.getActiveElections();
         List<Election> upcomingElections = electionService.getUpcomingElections();
 
+        // Get the first active election for voting
+        Election election = activeElections.isEmpty() ? null : activeElections.get(0);
+
         model.addAttribute("user", currentUser);
         model.addAttribute("activeElections", activeElections);
         model.addAttribute("upcomingElections", upcomingElections);
+        model.addAttribute("election", election);
+        if (election != null) {
+            // Assuming positions are loaded with election
+            model.addAttribute("positions", election.getPositions());
+        }
         model.addAttribute("currentTime", LocalDateTime.now());
 
         return "voter/vote-now";
