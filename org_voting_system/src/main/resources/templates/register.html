@@ -1,100 +1,108 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register to Cast Your Vote  - E-VOTE</title>
+    <title>Register - E-VOTE System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
     <style>
         :root {
             --maroon: #7b0000;
             --gold: #FFC107;
             --bg: #f3f4f6;
             --white: #ffffff;
+            --dark: #1f2937;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+            font-family: 'Inter', sans-serif; 
         }
-
-        body {
-            background: var(--bg);
+        
+        body { 
+            background: linear-gradient(135deg, var(--maroon) 0%, #5a0000 100%);
             min-height: 100vh;
             display: flex;
-            justify-content: center;
             align-items: center;
+            justify-content: center;
             padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: rgba(255, 193, 7, 0.1);
+            border-radius: 50%;
+            top: -200px;
+            right: -200px;
+        }
+
+        body::after {
+            content: '';
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: rgba(255, 193, 7, 0.1);
+            border-radius: 50%;
+            bottom: -150px;
+            left: -150px;
         }
 
         .register-container {
-            background: white;
+            max-width: 700px;
+            width: 100%;
+            z-index: 1;
+        }
+
+        .register-card {
+            background: var(--white);
             padding: 40px;
             border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            width: 100%;
-            max-width: 700px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            border-top: 5px solid var(--gold);
         }
 
-        .header {
+        .register-header {
             text-align: center;
             margin-bottom: 30px;
-            border-bottom: 3px solid var(--maroon);
-            padding-bottom: 20px;
         }
 
-        .header h2 {
+        .register-header h2 {
             font-size: 28px;
             color: var(--maroon);
-            margin-bottom: 5px;
+            margin-bottom: 10px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
         }
 
-        .header h2 span {
-            color: var(--gold);
-        }
-
-        .subtitle {
+        .register-header p {
+            font-size: 14px;
             color: #6b7280;
-            font-size: 14px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .alert {
-            padding: 12px 15px;
-            margin-bottom: 20px;
-            border-radius: 6px;
-            text-align: center;
-            font-size: 14px;
-        }
-
-        .alert-error {
-            background-color: #fee;
-            color: #c33;
-            border: 1px solid #fcc;
-        }
-
-        .alert-success {
-            background-color: #efe;
-            color: #3c3;
-            border: 1px solid #cfc;
         }
 
         .form-section {
-            margin-bottom: 25px;
+            margin-bottom: 30px;
         }
 
         .section-title {
-            font-size: 23px;
+            font-size: 18px;
             color: var(--maroon);
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             font-weight: 700;
-            letter-spacing: 0.5px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f3f4f6;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
         }
 
         .form-row {
@@ -105,82 +113,197 @@
         }
 
         .form-group {
-            display: flex;
-            flex-direction: column;
+            margin-bottom: 20px;
         }
 
         .form-group.full-width {
             grid-column: 1 / -1;
         }
 
-        label {
-            font-size: 13px;
-            color: #374151;
-            margin-bottom: 6px;
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: bold;
+            color: var(--maroon);
+            margin-bottom: 8px;
+            font-family: 'Poppins', sans-serif;
             font-weight: 500;
         }
 
-        label .required {
-            color: var(--maroon);
+        .form-group label .required {
+            color: #ef4444;
         }
 
-        input[type="text"],
-        input[type="date"] {
-            padding: 12px;
-            border: 1px solid #d1d5db;
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6b7280;
+            font-size: 16px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 12px 12px 45px;
+            border: 2px solid #d1d5db;
             border-radius: 6px;
             font-size: 14px;
-            transition: border-color 0.3s;
+            transition: 0.3s;
         }
 
-        input[type="text"]:focus,
-        input[type="date"]:focus {
+        .form-group input:focus {
             outline: none;
             border-color: var(--maroon);
         }
 
-        input::placeholder {
+        .form-group input::placeholder {
             color: #9ca3af;
         }
 
-        .btn-primary {
+        .btn-submit {
             width: 100%;
             padding: 14px;
             background: var(--maroon);
-            color: white;
+            color: var(--white);
             border: none;
             border-radius: 6px;
             font-size: 16px;
             font-weight: bold;
             cursor: pointer;
-            margin-top: 10px;
-            transition: background 0.3s;
+            transition: 0.3s;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 10px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
         }
 
-        .btn-primary:hover {
+        .btn-submit:hover {
             background: #5a0000;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(123, 0, 0, 0.3);
+        }
+
+        .divider {
+            text-align: center;
+            margin: 25px 0;
+            position: relative;
+        }
+
+        .divider::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            width: 100%;
+            height: 1px;
+            background: #d1d5db;
+        }
+
+        .divider span {
+            background: var(--white);
+            padding: 0 15px;
+            color: #6b7280;
+            font-size: 13px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 20px;
+            color: #6b7280;
+            font-size: 14px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+        }
+
+        .login-link a {
+            color: var(--maroon);
+            font-weight: bold;
+            text-decoration: none;
+            transition: 0.3s;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+        }
+
+        .login-link a:hover {
+            color: #5a0000;
+            text-decoration: underline;
+        }
+
+        .back-home {
+            text-align: left;
+            margin-top: 15px;
+        }
+
+        .back-home a {
+            color: #6b7280;
+            text-decoration: none;
+            font-size: 20px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .back-home a:hover {
+            color: var(--maroon);
+            background: #f3f4f6;
+        }
+
+        .alert {
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .alert-error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
+        .alert-success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
         }
 
         .info-box {
-            background: #fef3c7;
-            border-left: 4px solid var(--gold);
-            padding: 12px 15px;
-            border-radius: 6px;
-            margin-bottom: 20px;
-            font-size: 13px;
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-left: 5px solid var(--gold);
+            padding: 15px;
+            margin-bottom: 25px;
+            border-radius: 8px;
+            font-size: 14px;
             color: #92400e;
         }
 
         .info-box i {
-            margin-right: 8px;
             color: var(--gold);
+            margin-right: 8px;
         }
 
-        @media (max-width: 600px) {
+        @media (max-width: 768px) {
+            .register-card {
+                padding: 30px 20px;
+            }
+
+            .register-header h2 {
+                font-size: 24px;
+            }
+
             .form-row {
                 grid-template-columns: 1fr;
             }
@@ -188,71 +311,116 @@
     </style>
 </head>
 <body>
+
     <div class="register-container">
-        <div class="header">
-            <h2>E-VOTE <span>SYSTEM</span></h2>
-            <p class="subtitle">Voter Registration</p>
-        </div>
-
-        <div class="info-box">
-            <i class="fas fa-info-circle"></i>
-            Please fill out all required fields to register as a voter.
-        </div>
-
-        <form th:action="@{/register}" method="post">
-            <div class="form-section">
-                <div class="section-title">Personal Information</div>
-                
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="firstName">First Name <span class="required">*</span></label>
-                        <input type="text" id="firstName" name="firstName" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="middleName">Middle Name</label>
-                        <input type="text" id="middleName" name="middleName">
-                    </div>
-                </div>
-
-                <div class="form-group full-width">
-                    <label for="lastName">Last Name <span class="required">*</span></label>
-                    <input type="text" id="lastName" name="lastName" required>
-                </div>
-
-                <div class="form-group full-width">
-                    <label for="birthdate">Birthdate <span class="required">*</span></label>
-                    <input type="date" id="birthdate" name="birthdate" required>
+        <div class="register-card">
+            <div class="register-header">
+                <h2><i class="fas fa-user-plus"></i> Create Account</h2>
+                <p>Register to participate in elections</p>
+                <div class="back-home">
+                    <a href="landing.html" title="Back to Home">
+                        <i class="fas fa-arrow-left"></i>
+                    </a>
                 </div>
             </div>
 
-            <div class="form-section">
-                <div class="section-title">Student Information</div>
-                
-                <div class="form-group full-width">
-                    <label for="studentNumber">Student Number <span class="required">*</span></label>
-                    <input type="text" id="studentNumber" name="studentNumber" required 
-                           placeholder="Enter your student number">
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="organization">Organization <span class="required">*</span></label>
-                        <input type="text" id="organization" name="organization" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="section">Section <span class="required">*</span></label>
-                        <input type="text" id="section" name="section" required>
-                    </div>
-                </div>
+            <!-- Error/Success Messages -->
+            <div class="alert alert-error" th:if="${error}" style="display: none;">
+                <i class="fas fa-exclamation-circle"></i> <span th:text="${error}">Error message</span>
             </div>
 
-            <button type="submit" class="btn-primary">
-                <i class="fas fa-user-plus"></i>
-                Register as Voter
-            </button>
-        </form>
+            <div class="alert alert-success" th:if="${message}" style="display: none;">
+                <i class="fas fa-check-circle"></i> <span th:text="${message}">Success message</span>
+            </div>
+
+            <div class="info-box">
+                <i class="fas fa-info-circle"></i>
+                <strong>Note:</strong> Please fill out all required fields to register as a voter.
+            </div>
+
+            <form action="/register" method="post">
+                <div class="form-section">
+                    <div class="section-title"><i class="fas fa-user"></i> Personal Information</div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>First Name <span class="required">*</span></label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-user input-icon"></i>
+                                <input type="text" name="firstName" placeholder="Enter first name" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Middle Name</label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-user input-icon"></i>
+                                <input type="text" name="middleName" placeholder="Enter middle name">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Last Name <span class="required">*</span></label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-user input-icon"></i>
+                            <input type="text" name="lastName" placeholder="Enter last name" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Birthdate <span class="required">*</span></label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-calendar input-icon"></i>
+                            <input type="date" name="birthdate" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <div class="section-title"><i class="fas fa-graduation-cap"></i> Student Information</div>
+                    
+                    <div class="form-group">
+                        <label>Student Number <span class="required">*</span></label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-id-card input-icon"></i>
+                            <input type="text" name="studentNumber" placeholder="Enter your student number" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Organization <span class="required">*</span></label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-building input-icon"></i>
+                                <input type="text" name="organization" placeholder="Enter organization" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Section <span class="required">*</span></label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-users input-icon"></i>
+                                <input type="text" name="section" placeholder="Enter section" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-submit">
+                    <i class="fas fa-user-plus"></i> Register as Voter
+                </button>
+            </form>
+
+            <div class="divider">
+                <span>OR</span>
+            </div>
+
+            <div class="login-link">
+                Already have an account? <a href="login.html">Login here</a>
+            </div>
+        </div>
     </div>
+
 </body>
 </html>

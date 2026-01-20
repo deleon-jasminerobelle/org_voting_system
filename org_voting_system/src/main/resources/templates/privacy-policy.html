@@ -29,22 +29,28 @@
 
         /* Navigation */
         .navbar {
-            background: var(--maroon);
-            padding: 15px 50px;
+            background: rgba(123, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 20px 50px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
         .logo {
-            font-size: 28px;
-            font-weight: bold;
+            font-size: 32px;
+            font-weight: 800;
             color: var(--white);
+            letter-spacing: -1px;
         }
 
         .logo span {
             color: var(--gold);
+            font-weight: 900;
         }
 
         .back-link {
@@ -52,102 +58,203 @@
             text-decoration: none;
             display: flex;
             align-items: center;
-            gap: 8px;
-            transition: 0.3s;
+            gap: 10px;
+            font-weight: 500;
+            padding: 10px 20px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
         }
 
         .back-link:hover {
             color: var(--gold);
+            border-color: var(--gold);
+            background: rgba(255, 193, 7, 0.1);
+            transform: translateX(-5px);
         }
 
         /* Content */
         .container {
-            max-width: 900px;
-            margin: 50px auto;
-            padding: 0 20px;
+            max-width: 1000px;
+            margin: 60px auto;
+            padding: 0 30px;
         }
 
         .policy-card {
             background: var(--white);
-            padding: 50px;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            padding: 60px;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
             border-top: 5px solid var(--maroon);
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .policy-header {
             text-align: center;
-            margin-bottom: 40px;
+            margin-bottom: 50px;
+            padding-bottom: 30px;
+            border-bottom: 2px solid #f3f4f6;
         }
 
         .policy-header h1 {
-            font-size: 36px;
+            font-size: 48px;
             color: var(--maroon);
-            margin-bottom: 10px;
+            margin-bottom: 15px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .policy-header h1 i {
+            font-size: 42px;
         }
 
         .policy-header .date {
             color: #6b7280;
-            font-size: 14px;
+            font-size: 15px;
+            font-weight: 500;
+            background: #f3f4f6;
+            padding: 8px 20px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 10px;
         }
 
         .section {
-            margin-bottom: 35px;
+            margin-bottom: 45px;
+            scroll-margin-top: 100px;
         }
 
         .section h2 {
-            font-size: 24px;
+            font-size: 28px;
             color: var(--maroon);
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
+            font-weight: 700;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f3f4f6;
+        }
+
+        .section h2 i {
+            font-size: 24px;
+            color: var(--gold);
         }
 
         .section h3 {
-            font-size: 18px;
+            font-size: 20px;
             color: var(--maroon);
-            margin-top: 20px;
-            margin-bottom: 10px;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            font-weight: 600;
+            padding-left: 15px;
+            border-left: 4px solid var(--gold);
         }
 
         .section p {
-            line-height: 1.8;
+            line-height: 1.9;
             color: #374151;
-            margin-bottom: 15px;
+            margin-bottom: 18px;
+            font-size: 16px;
         }
 
         .section ul {
-            margin-left: 25px;
-            margin-bottom: 15px;
+            margin-left: 30px;
+            margin-bottom: 20px;
         }
 
         .section li {
-            line-height: 1.8;
+            line-height: 1.9;
             color: #374151;
-            margin-bottom: 8px;
+            margin-bottom: 12px;
+            font-size: 16px;
+            position: relative;
+            padding-left: 10px;
+        }
+
+        .section li::marker {
+            color: var(--maroon);
+        }
+
+        .section li strong {
+            color: var(--maroon);
+            font-weight: 600;
         }
 
         .highlight-box {
-            background: #fef3c7;
-            border-left: 4px solid var(--gold);
-            padding: 20px;
-            margin: 20px 0;
-            border-radius: 6px;
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-left: 5px solid var(--gold);
+            padding: 25px;
+            margin: 30px 0;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(255, 193, 7, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .highlight-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100px;
+            height: 100px;
+            background: rgba(255, 193, 7, 0.1);
+            border-radius: 50%;
+            transform: translate(30%, -30%);
         }
 
         .highlight-box p {
             margin: 0;
             color: #92400e;
+            font-weight: 500;
+            font-size: 16px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .highlight-box i {
+            color: var(--gold);
+            margin-right: 8px;
         }
 
         /* Footer */
         .footer {
-            background: var(--maroon);
+            background: linear-gradient(135deg, var(--maroon) 0%, #5a0000 100%);
             color: var(--white);
-            padding: 30px 50px;
+            padding: 40px 50px;
             text-align: center;
-            margin-top: 50px;
+            margin-top: 80px;
+            position: relative;
+        }
+
+        .footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+        }
+
+        .footer p {
+            font-size: 15px;
+            opacity: 0.9;
         }
 
         @media (max-width: 768px) {
@@ -155,16 +262,40 @@
                 padding: 15px 20px;
             }
 
+            .logo {
+                font-size: 24px;
+            }
+
+            .container {
+                padding: 0 20px;
+                margin: 40px auto;
+            }
+
             .policy-card {
                 padding: 30px 20px;
+                border-radius: 12px;
             }
 
             .policy-header h1 {
-                font-size: 28px;
+                font-size: 32px;
+                flex-direction: column;
+                gap: 10px;
             }
 
             .section h2 {
-                font-size: 20px;
+                font-size: 22px;
+            }
+
+            .section h3 {
+                font-size: 18px;
+            }
+
+            .section p, .section li {
+                font-size: 15px;
+            }
+
+            .highlight-box {
+                padding: 20px;
             }
         }
     </style>
