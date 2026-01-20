@@ -20,6 +20,10 @@ public class ElectionService {
         return electionRepository.save(election);
     }
 
+    public List<Election> findAll() {
+        return electionRepository.findAll();
+    }
+
     public List<Election> getAllElections() {
         return electionRepository.findAll();
     }
@@ -45,6 +49,9 @@ public class ElectionService {
         List<Election> elections = electionRepository.findAll();
 
         for (Election election : elections) {
+            if (election.getStartDatetime() == null || election.getEndDatetime() == null) {
+                continue;
+            }
             if (now.isBefore(election.getStartDatetime())) {
                 election.setStatus(Election.Status.UPCOMING);
             } else if (now.isAfter(election.getStartDatetime()) && now.isBefore(election.getEndDatetime())) {

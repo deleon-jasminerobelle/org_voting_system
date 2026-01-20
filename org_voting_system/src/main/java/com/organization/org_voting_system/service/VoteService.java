@@ -78,7 +78,7 @@ public class VoteService {
             return false;
         }
         
-        return voteRepository.existsByUserAndElection(user, election);
+        return voteRepository.existsByVoterAndElection(user, election);
     }
     
     public boolean hasUserVotedForPosition(Long userId, Long electionId, Long positionId) {

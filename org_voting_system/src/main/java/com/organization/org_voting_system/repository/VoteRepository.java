@@ -1,15 +1,16 @@
 package com.organization.org_voting_system.repository;
 
-import com.organization.org_voting_system.entity.Vote;
-import com.organization.org_voting_system.entity.User;
-import com.organization.org_voting_system.entity.Election;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-import java.util.Optional;
+import com.organization.org_voting_system.entity.Election;
+import com.organization.org_voting_system.entity.User;
+import com.organization.org_voting_system.entity.Vote;
 
 @Repository
 public interface VoteRepository extends JpaRepository<Vote, Long> {
@@ -19,8 +20,6 @@ public interface VoteRepository extends JpaRepository<Vote, Long> {
     List<Vote> findByElection(Election election);
 
     boolean existsByVoterAndElection(User voter, Election election);
-
-    boolean existsByUserAndElection(User user, Election election);
     
     // Additional methods for voter functionality
     boolean existsByVoterUserIdAndElectionElectionIdAndPositionPositionId(Long userId, Long electionId, Long positionId);

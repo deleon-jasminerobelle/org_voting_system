@@ -2,6 +2,7 @@ package com.organization.org_voting_system.controller;
 
 import java.security.Principal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,89 +38,128 @@ public class VoterController {
 
     @GetMapping("/dashboard")
     public String dashboard(Model model, Principal principal) {
-        User currentUser = userService.findByUsername(principal.getName());
-        List<Election> activeElections = electionService.getActiveElections();
-        List<Election> upcomingElections = electionService.getUpcomingElections();
-        
+        User currentUser = userService.findByUsernameOptional(principal.getName())
+            .orElse(userService.findByEmail(principal.getName()).orElse(null));
+        if (currentUser == null) {
+            return "redirect:/login?error=user_not_found";
+        }
+        if (Boolean.FALSE.equals(currentUser.getIsActive())) {
+            return "redirect:/login?error=user_inactive";
+        }
+        List<Election> activeElections = new ArrayList<>();
+        try {
+            activeElections = electionService.getActiveElections();
+        } catch (Exception e) {
+            // ignore
+        }
+        List<Election> upcomingElections = new ArrayList<>();
+        try {
+            upcomingElections = electionService.getUpcomingElections();
+        } catch (Exception e) {
+            // ignore
+        }
+        List<Election> votedElections = new ArrayList<>();
+        try {
+            votedElections = voteService.getElectionsVotedByUser(currentUser.getUserId());
+        } catch (Exception e) {
+            // ignore
+        }
+
         model.addAttribute("user", currentUser);
         model.addAttribute("activeElections", activeElections);
         model.addAttribute("upcomingElections", upcomingElections);
+        model.addAttribute("votedElections", votedElections);
         model.addAttribute("currentTime", LocalDateTime.now());
-        
+
         return "voter/voter-dashboard";
     }
 
     @GetMapping("/home")
     public String home(Model model, Principal principal) {
         User currentUser = userService.findByUsername(principal.getName());
+        if (currentUser == null) {
+            return "redirect:/login?error=user_not_found";
+        }
         List<Election> activeElections = electionService.getActiveElections();
         List<Election> upcomingElections = electionService.getUpcomingElections();
-        
+
         model.addAttribute("user", currentUser);
         model.addAttribute("activeElections", activeElections);
         model.addAttribute("upcomingElections", upcomingElections);
         model.addAttribute("currentTime", LocalDateTime.now());
-        
+
         return "voter/home";
     }
 
-    @GetMapping("/vote-now")
+    @GetMapping("vote-now")
     public String voteNow(Model model, Principal principal) {
         User currentUser = userService.findByUsername(principal.getName());
+        if (currentUser == null) {
+            return "redirect:/login?error=user_not_found";
+        }
         List<Election> activeElections = electionService.getActiveElections();
         List<Election> upcomingElections = electionService.getUpcomingElections();
-        
+
         model.addAttribute("user", currentUser);
         model.addAttribute("activeElections", activeElections);
         model.addAttribute("upcomingElections", upcomingElections);
         model.addAttribute("currentTime", LocalDateTime.now());
-        
+
         return "voter/vote-now";
     }
 
     @GetMapping("/leading")
     public String leading(Model model, Principal principal) {
         User currentUser = userService.findByUsername(principal.getName());
+        if (currentUser == null) {
+            return "redirect:/login?error=user_not_found";
+        }
         List<Election> activeElections = electionService.getActiveElections();
-        
+
         model.addAttribute("user", currentUser);
         model.addAttribute("activeElections", activeElections);
-        
+
         return "voter/leading";
     }
 
     @GetMapping("/voting-status")
     public String votingStatus(Model model, Principal principal) {
         User currentUser = userService.findByUsername(principal.getName());
+        if (currentUser == null) {
+            return "redirect:/login?error=user_not_found";
+        }
         List<Election> votedElections = voteService.getElectionsVotedByUser(currentUser.getUserId());
-        
+
         model.addAttribute("user", currentUser);
         model.addAttribute("votedElections", votedElections);
-        
+
         return "voter/voting-status";
     }
 
     @GetMapping("/election/{electionId}")
     public String viewElection(@PathVariable Long electionId, Model model, Principal principal) {
         User currentUser = userService.findByUsername(principal.getName());
+        if (currentUser == null) {
+            return "redirect:/login?error=user_not_found";
+        }
         Election election = electionService.findById(electionId);
-        
+
         if (election == null) {
             return "redirect:/voter/dashboard?error=election_not_found";
         }
-        
+
         // Check if election is active
         if (!election.getStatus().equals(Election.Status.ACTIVE)) {
             return "redirect:/voter/dashboard?error=election_not_active";
         }
-        
+
         // Check if user has already voted
         boolean hasVoted = voteService.hasUserVotedInElection(currentUser.getUserId(), electionId);
-        
+
         model.addAttribute("election", election);
         model.addAttribute("hasVoted", hasVoted);
         model.addAttribute("user", currentUser);
-        
+
         return "voter/election";
     }
 

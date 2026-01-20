@@ -37,6 +37,6 @@ public class Role {
     public void setRoleName(RoleName roleName) { this.roleName = roleName; }
 
     public enum RoleName {
-        admin, election_officer, voter
+        ADMIN, ELECTION_OFFICER, VOTER
     }
 }

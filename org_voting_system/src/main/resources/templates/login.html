@@ -292,20 +292,28 @@
             </div>
 
             <!-- Error/Success Messages -->
-            <div class="alert alert-error" th:if="${error}" style="display: none;">
+            <div class="alert alert-error" th:if="${param.error}" th:style="'display: block;'">
+                <i class="fas fa-exclamation-circle"></i> <span th:text="${param.error != null ? param.error : 'Invalid username or password'}">Invalid credentials</span>
+            </div>
+
+            <div class="alert alert-error" th:if="${error}" th:style="'display: block;'">
                 <i class="fas fa-exclamation-circle"></i> <span th:text="${error}">Invalid credentials</span>
             </div>
 
-            <div class="alert alert-success" th:if="${message}" style="display: none;">
+            <div class="alert alert-success" th:if="${param.message}" th:style="'display: block;'">
+                <i class="fas fa-check-circle"></i> <span th:text="${param.message}">Success message</span>
+            </div>
+
+            <div class="alert alert-success" th:if="${message}" th:style="'display: block;'">
                 <i class="fas fa-check-circle"></i> <span th:text="${message}">Success message</span>
             </div>
 
             <form action="/login" method="post">
                 <div class="form-group">
-                    <label>Student Number</label>
+                    <label>Email or Username</label>
                     <div class="input-wrapper">
-                        <i class="fas fa-id-card input-icon"></i>
-                        <input type="text" name="studentNumber" placeholder="Enter your student number" required autofocus>
+                        <i class="fas fa-envelope input-icon"></i>
+                        <input type="text" name="username" placeholder="Enter your email or username" required autofocus>
                     </div>
                 </div>
 
@@ -318,7 +326,7 @@
                 </div>
 
                 <div class="forgot-password">
-                    <a href="forgot-password.html"><i class="fas fa-key"></i> Forgot Password?</a>
+                <a href="/forgot-password"><i class="fas fa-key"></i> Forgot Password?</a>
                 </div>
 
                 <button type="submit" class="btn-submit">
@@ -331,12 +339,12 @@
             </div>
 
             <div class="signup-link">
-                Don't have an account? <a href="register.html">Sign Up Now</a>
+                Don't have an account? <a href="/register">Sign Up Now</a>
             </div>
         </div>
 
         <div class="back-home">
-            <a href="landing.html">
+            <a href="/">
                 <i class="fas fa-arrow-left"></i> Back to Home
             </a>
         </div>

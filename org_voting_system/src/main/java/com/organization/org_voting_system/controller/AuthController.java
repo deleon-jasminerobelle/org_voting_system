@@ -6,6 +6,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.organization.org_voting_system.entity.User;
 import com.organization.org_voting_system.service.UserService;
@@ -23,15 +24,26 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public String register(User user, Model model) {
+    public String register(User user, Model model, RedirectAttributes redirectAttributes) {
         try {
             if (userService.existsByStudentNumber(user.getStudentNumber())) {
                 model.addAttribute("error", "Student Number already registered");
                 return "register";
             }
+            if (user.getUsername() == null || user.getUsername().isEmpty()) {
+                user.setUsername(user.getStudentNumber());
+            }
+            if (userService.existsByUsername(user.getUsername())) {
+                model.addAttribute("error", "Username already exists");
+                return "register";
+            }
+            if (userService.existsByEmail(user.getEmail())) {
+                model.addAttribute("error", "Email already registered");
+                return "register";
+            }
             userService.registerUser(user);
-            model.addAttribute("success", "Registration successful!");
-            return "register";
+            redirectAttributes.addFlashAttribute("success", "Registration successful! Please login.");
+            return "redirect:/login";
         } catch (Exception e) {
             model.addAttribute("error", "Registration failed: " + e.getMessage());
             return "register";
