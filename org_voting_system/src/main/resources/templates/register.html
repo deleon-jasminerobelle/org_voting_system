@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register - E-VOTE System</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
         :root {
@@ -78,6 +81,8 @@
             font-size: 28px;
             color: var(--maroon);
             margin-bottom: 10px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
         }
 
         .register-header p {
@@ -96,6 +101,8 @@
             font-weight: 700;
             padding-bottom: 10px;
             border-bottom: 2px solid #f3f4f6;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
         }
 
         .form-row {
@@ -119,6 +126,8 @@
             font-weight: bold;
             color: var(--maroon);
             margin-bottom: 8px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
         }
 
         .form-group label .required {
@@ -171,6 +180,8 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
         }
 
         .btn-submit:hover {
@@ -209,6 +220,8 @@
             margin-top: 20px;
             color: #6b7280;
             font-size: 14px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
         }
 
         .login-link a {
@@ -216,6 +229,8 @@
             font-weight: bold;
             text-decoration: none;
             transition: 0.3s;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
         }
 
         .login-link a:hover {
@@ -224,22 +239,26 @@
         }
 
         .back-home {
-            text-align: center;
-            margin-top: 20px;
+            text-align: left;
+            margin-top: 15px;
         }
 
         .back-home a {
-            color: var(--white);
+            color: #6b7280;
             text-decoration: none;
-            font-size: 14px;
+            font-size: 20px;
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            transition: 0.3s;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
         }
 
         .back-home a:hover {
-            color: var(--gold);
+            color: var(--maroon);
+            background: #f3f4f6;
         }
 
         .alert {
@@ -298,6 +317,11 @@
             <div class="register-header">
                 <h2><i class="fas fa-user-plus"></i> Create Account</h2>
                 <p>Register to participate in elections</p>
+                <div class="back-home">
+                    <a href="landing.html" title="Back to Home">
+                        <i class="fas fa-arrow-left"></i>
+                    </a>
+                </div>
             </div>
 
             <!-- Error/Success Messages -->
@@ -395,12 +419,6 @@
             <div class="login-link">
                 Already have an account? <a href="login.html">Login here</a>
             </div>
-        </div>
-
-        <div class="back-home">
-            <a href="landing.html">
-                <i class="fas fa-arrow-left"></i> Back to Home
-            </a>
         </div>
     </div>
 

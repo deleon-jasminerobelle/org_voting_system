@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - E-VOTE System</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
         :root {
@@ -99,6 +102,8 @@
             font-size: 28px;
             color: var(--maroon);
             margin-bottom: 10px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
         }
 
         .login-header p {
@@ -116,6 +121,8 @@
             font-weight: bold;
             color: var(--maroon);
             margin-bottom: 8px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
         }
 
         .input-wrapper {
@@ -155,6 +162,8 @@
             text-decoration: none;
             font-size: 13px;
             transition: 0.3s;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
         }
 
         .forgot-password a:hover {
@@ -177,6 +186,8 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
         }
 
         .btn-submit:hover {
@@ -215,6 +226,8 @@
             margin-top: 20px;
             color: #6b7280;
             font-size: 14px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
         }
 
         .signup-link a {
@@ -222,6 +235,8 @@
             font-weight: bold;
             text-decoration: none;
             transition: 0.3s;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
         }
 
         .signup-link a:hover {
@@ -230,22 +245,26 @@
         }
 
         .back-home {
-            text-align: center;
-            margin-top: 20px;
+            text-align: left;
+            margin-top: 15px;
         }
 
         .back-home a {
-            color: var(--white);
+            color: #6b7280;
             text-decoration: none;
-            font-size: 14px;
+            font-size: 20px;
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            transition: 0.3s;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
         }
 
         .back-home a:hover {
-            color: var(--gold);
+            color: var(--maroon);
+            background: #f3f4f6;
         }
 
         .alert {
@@ -289,6 +308,11 @@
             <div class="login-header">
                 <h2>Welcome Back</h2>
                 <p>Enter your credentials to access your account</p>
+                <div class="back-home">
+                    <a href="landing.html" title="Back to Home">
+                        <i class="fas fa-arrow-left"></i>
+                    </a>
+                </div>
             </div>
 
             <!-- Error/Success Messages -->
@@ -333,12 +357,6 @@
             <div class="signup-link">
                 Don't have an account? <a href="register.html">Sign Up Now</a>
             </div>
-        </div>
-
-        <div class="back-home">
-            <a href="landing.html">
-                <i class="fas fa-arrow-left"></i> Back to Home
-            </a>
         </div>
     </div>
 
