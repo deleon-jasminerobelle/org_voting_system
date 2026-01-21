@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <title>Election Officer Dashboard</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="/js/election-officer-dashboard.js"></script>
   <style>
     body {
       margin: 0;
@@ -87,6 +88,18 @@
       color: #ffd700;
     }
 
+    .menu a.disabled {
+      color: #cccccc;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    .menu a.disabled:hover {
+      background-color: transparent;
+      border-left: 4px solid transparent;
+      color: #cccccc;
+    }
+
     /* LOGOUT */
     .logout {
       padding: 20px;
@@ -133,6 +146,301 @@
       font-size: 14px;
       color: #555;
     }
+
+    /* TABLE STYLES */
+    .elections-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background-color: #ffffff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    .elections-table thead {
+      background-color: #8b0000;
+      color: #ffffff;
+    }
+
+    .elections-table th {
+      padding: 15px 20px;
+      text-align: left;
+      font-weight: 600;
+      font-size: 14px;
+      border-bottom: 2px solid #a00000;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .elections-table th:hover {
+      background-color: #a00000;
+    }
+
+    .elections-table th[data-sort] {
+      position: relative;
+    }
+
+    .elections-table th[data-sort]::after {
+      content: ' ⇅';
+      font-size: 12px;
+      margin-left: 5px;
+    }
+
+    .elections-table th.sort-asc::after {
+      content: ' ↑';
+    }
+
+    .elections-table th.sort-desc::after {
+      content: ' ↓';
+    }
+
+    .elections-table td {
+      padding: 15px 20px;
+      border-bottom: 1px solid #eee;
+      font-size: 14px;
+      color: #333;
+    }
+
+    .elections-table tbody tr {
+      transition: background-color 0.3s ease;
+    }
+
+    .elections-table tbody tr:hover {
+      background-color: #f8f9fa;
+    }
+
+    .elections-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .status-active {
+      color: #28a745;
+      font-weight: 600;
+    }
+
+    .status-upcoming {
+      color: #ffc107;
+      font-weight: 600;
+    }
+
+    .status-closed {
+      color: #6c757d;
+      font-weight: 600;
+    }
+
+    .close-election-btn {
+      background-color: #dc3545;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+      transition: background-color 0.3s ease;
+    }
+
+    .close-election-btn:hover {
+      background-color: #c82333;
+    }
+
+    .no-action {
+      color: #6c757d;
+      font-style: italic;
+    }
+
+    /* Voters List Styles */
+    .voters-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .stats-card {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+    }
+
+    .stat-item {
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      text-align: center;
+      flex: 1;
+      min-width: 150px;
+    }
+
+    .stat-item h3 {
+      margin: 0 0 5px 0;
+      color: #8b0000;
+      font-size: 28px;
+    }
+
+    .stat-item p {
+      margin: 0;
+      color: #666;
+      font-size: 14px;
+    }
+
+    .voters-table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: #ffffff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    .voters-table thead {
+      background-color: #8b0000;
+      color: #ffffff;
+    }
+
+    .voters-table th {
+      padding: 15px 20px;
+      text-align: left;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .voters-table td {
+      padding: 15px 20px;
+      border-bottom: 1px solid #eee;
+      font-size: 14px;
+    }
+
+    .voters-table tbody tr:hover {
+      background-color: #f8f9fa;
+    }
+
+    .status-badge {
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .status-badge.voted {
+      background-color: #28a745;
+      color: white;
+    }
+
+    .status-badge.not-voted {
+      background-color: #ffc107;
+      color: #212529;
+    }
+
+    /* Elected List Styles */
+    .elected-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .results-summary {
+      margin-bottom: 30px;
+    }
+
+    .result-card {
+      background: #ffffff;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+
+    .result-card h3 {
+      margin: 0 0 15px 0;
+      color: #8b0000;
+    }
+
+    .actions {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary, .btn-secondary, .btn-danger {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      transition: background-color 0.3s ease;
+    }
+
+    .btn-primary {
+      background-color: #8b0000;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background-color: #a00000;
+    }
+
+    .btn-secondary {
+      background-color: #6c757d;
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      background-color: #5a6268;
+    }
+
+    .btn-danger {
+      background-color: #dc3545;
+      color: white;
+    }
+
+    .btn-danger:hover {
+      background-color: #c82333;
+    }
+
+    /* Backup & Restore Styles */
+    .backup-container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .backup-section, .restore-section {
+      background: #ffffff;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+
+    .backup-section h3, .restore-section h3 {
+      margin: 0 0 15px 0;
+      color: #8b0000;
+    }
+
+    .backup-status, .restore-status {
+      margin-top: 15px;
+      padding: 10px;
+      background-color: #f8f9fa;
+      border-radius: 4px;
+      font-size: 14px;
+      color: #666;
+    }
+
+    .warning {
+      background: #fff3cd;
+      border: 1px solid #ffeaa7;
+      border-radius: 8px;
+      padding: 20px;
+      margin-top: 20px;
+    }
+
+    .warning p {
+      margin: 0;
+      color: #856404;
+      font-size: 14px;
+    }
   </style>
 </head>
 <body>
@@ -149,23 +457,25 @@
     </div>
 
     <div class="menu">
-      <a href="#" class="active">Dashboard</a>
-      <a href="#">Election Management</a>
-      <a href="#">List of Voters</a>
-      <a href="#">List of Elected</a>
-      <a href="#">Backup & Restore</a>
-      <a href="#">User Management</a>
+      <a href="#" class="active" data-section="dashboard">Dashboard</a>
+      <a href="#" data-section="list-voters">List of Voters</a>
+      <a href="#" data-section="list-elected">List of Elected</a>
+      <a href="#" data-section="backup-restore">Backup & Restore</a>
     </div>
 
     <div class="logout">
-      <a href="#">Logout</a>
+      <a href="/logout">Logout</a>
     </div>
   </div>
 
   <div class="main">
     <div class="header">
-      <h1>Election Officer Dashboard</h1>
-      <p>Manage elections, monitor voters, and ensure system security.</p>
+      <h1 id="page-title">Election Officer Dashboard</h1>
+      <p id="page-subtitle">View elections and close active elections when necessary.</p>
+    </div>
+
+    <div id="content" class="content" style="margin-top: 30px;">
+      <!-- Content will be loaded dynamically -->
     </div>
   </div>
 
