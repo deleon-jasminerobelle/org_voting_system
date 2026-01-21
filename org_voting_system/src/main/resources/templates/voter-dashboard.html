@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
@@ -365,14 +365,14 @@
         <aside class="sidebar">
             <div class="sidebar-header"><h2>E-VOTE <span>VOTER</span></h2></div>
             <div class="voter-profile">
-                <img src="https://ui-avatars.com/api/?name=Juan+Dela+Cruz&background=FFC107&color=7b0000" class="profile-img">
-                <span class="voter-name">Juan Dela Cruz</span>
-                <span class="voter-id">Student ID: 2024-001</span>
+                <img th:src="@{https://ui-avatars.com/api/?name={name}&background=FFC107&color=7b0000(name=${user.firstName + '+' + user.lastName})}" class="profile-img">
+                <span class="voter-name" th:text="${user.firstName + ' ' + user.lastName}">Juan Dela Cruz</span>
+                <span class="voter-id" th:text="'ID: ' + ${user.userId}">Student ID: 2024-001</span>
             </div>
             <nav class="nav-links">
                 <div class="nav-item active"><i class="fas fa-home"></i> Dashboard</div>
-                <div class="nav-item" onclick="location.href='voter-vote.html'"><i class="fas fa-vote-yea"></i> Vote Now</div>
-                <div class="nav-item" onclick="location.href='voter-leading.html'"><i class="fas fa-chart-line"></i> Leading</div>
+                <div class="nav-item" onclick="location.href='/voter/vote-now'"><i class="fas fa-vote-yea"></i> Vote Now</div>
+                <div class="nav-item" onclick="location.href='/voter/leading'"><i class="fas fa-chart-line"></i> Leading</div>
             </nav>
             <div class="logout-section">
                 <button class="btn-logout" onclick="openLogoutModal()"><i class="fas fa-sign-out-alt"></i> Logout</button>
@@ -385,57 +385,41 @@
                 <div class="stats-grid">
                     <div class="stat-card">
                         <i class="fas fa-vote-yea stat-icon"></i>
-                        <div class="stat-value">3</div>
+                        <div class="stat-value" th:text="${#lists.size(activeElections)}">3</div>
                         <div class="stat-label">Active Elections</div>
                     </div>
                     <div class="stat-card">
                         <i class="fas fa-check-circle stat-icon"></i>
-                        <div class="stat-value">1</div>
+                        <div class="stat-value" th:text="${votedElections != null ? #lists.size(votedElections) : 0}">1</div>
                         <div class="stat-label">Votes Cast</div>
                     </div>
                     <div class="stat-card">
                         <i class="fas fa-clock stat-icon"></i>
-                        <div class="stat-value">2</div>
+                        <div class="stat-value" th:text="${#lists.size(activeElections) - (votedElections != null ? #lists.size(votedElections) : 0)}">2</div>
                         <div class="stat-label">Pending Votes</div>
                     </div>
                 </div>
 
                 <div class="card">
                     <h3 class="card-title">Active Elections</h3>
-                    
-                    <div class="election-card">
+
+                    <div th:each="election : ${activeElections}" class="election-card">
                         <div class="election-info">
-                            <h3>Student Council Election 2024</h3>
-                            <p><i class="fas fa-calendar"></i> January 15 - January 20, 2026</p>
-                            <p><i class="fas fa-users"></i> 5 Positions Available</p>
+                            <h3 th:text="${election.title}">Election Title</h3>
+                            <p><i class="fas fa-calendar"></i> <span th:text="${#temporals.format(election.startDatetime, 'MMM dd, yyyy')} + ' - ' + ${#temporals.format(election.endDatetime, 'MMM dd, yyyy')}">Date Range</span></p>
+                            <p><i class="fas fa-users"></i> <span th:text="${election.positions != null ? #lists.size(election.positions) : 0}">0</span> Positions Available</p>
                         </div>
                         <div class="election-actions">
-                            <span class="badge voted">Voted</span>
+                            <span th:if="${votedElections != null and #lists.contains(votedElections, election)}" class="badge voted">Voted</span>
+                            <span th:if="${votedElections == null or not #lists.contains(votedElections, election)}" class="badge open">Open</span>
+                            <button th:if="${votedElections == null or not #lists.contains(votedElections, election)}" class="btn-primary" onclick="location.href='/voter/vote-now'">Vote Now</button>
                         </div>
                     </div>
 
-                    <div class="election-card">
-                        <div class="election-info">
-                            <h3>Department Representative Election</h3>
-                            <p><i class="fas fa-calendar"></i> January 18 - January 22, 2026</p>
-                            <p><i class="fas fa-users"></i> 3 Positions Available</p>
-                        </div>
-                        <div class="election-actions">
-                            <span class="badge open">Open</span>
-                            <button class="btn-primary" onclick="location.href='voter-vote.html'">Vote Now</button>
-                        </div>
-                    </div>
-
-                    <div class="election-card">
-                        <div class="election-info">
-                            <h3>Sports Committee Election</h3>
-                            <p><i class="fas fa-calendar"></i> January 20 - January 25, 2026</p>
-                            <p><i class="fas fa-users"></i> 2 Positions Available</p>
-                        </div>
-                        <div class="election-actions">
-                            <span class="badge open">Open</span>
-                            <button class="btn-primary" onclick="location.href='voter-vote.html'">Vote Now</button>
-                        </div>
+                    <div th:if="${#lists.isEmpty(activeElections)}" class="center">
+                        <i class="fas fa-info-circle big-icon"></i>
+                        <h3>No Active Elections</h3>
+                        <p>Check back later for upcoming elections.</p>
                     </div>
                 </div>
         </main>

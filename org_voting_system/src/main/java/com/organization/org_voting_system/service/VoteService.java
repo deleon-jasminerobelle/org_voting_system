@@ -38,16 +38,19 @@ public class VoteService {
             throw new IllegalArgumentException("User, candidate, election, and position cannot be null");
         }
 
-        // Check if user has already voted in this election for this position
-        if (voteRepository.existsByVoterAndElection(user, election)) {
-            throw new Exception("User has already voted in this election");
+        // Check if user has already voted for this position in this election
+        if (hasUserVotedForPosition(user.getUserId(), election.getElectionId(), position.getPositionId())) {
+            throw new Exception("User has already voted for this position in this election");
         }
 
-        // Create vote hash for confidentiality
-        String voteData = user.getUserId() + ":" + candidate.getCandidateId() + ":" + election.getElectionId() + ":" + System.currentTimeMillis();
+        // Create voter token for confidentiality
+        String voterToken = generateHash(user.getUserId().toString());
+
+        // Create vote hash for confidentiality and integrity
+        String voteData = user.getUserId() + ":" + candidate.getCandidateId() + ":" + election.getElectionId() + ":" + position.getPositionId() + ":" + System.currentTimeMillis();
         String voteHash = generateHash(voteData);
 
-        Vote vote = new Vote(election, position, candidate, user, voteHash);
+        Vote vote = new Vote(election, position, candidate, user, voteHash, voterToken);
         return voteRepository.save(vote);
     }
 
@@ -103,11 +106,14 @@ public class VoteService {
             throw new Exception("User has already voted for this position");
         }
         
+        // Create voter token for confidentiality
+        String voterToken = generateHash(userId.toString());
+
         // Create vote hash for security
         String voteData = userId + ":" + candidateId + ":" + electionId + ":" + positionId + ":" + System.currentTimeMillis();
         String voteHash = generateHash(voteData);
-        
-        Vote vote = new Vote(election, candidate.getPosition(), candidate, user, voteHash);
+
+        Vote vote = new Vote(election, candidate.getPosition(), candidate, user, voteHash, voterToken);
         voteRepository.save(vote);
     }
     
@@ -117,5 +123,9 @@ public class VoteService {
 
     public Long getVoteCountForCandidate(Long electionId, Long positionId, Long candidateId) {
         return voteRepository.countVotesByElectionPositionAndCandidate(electionId, positionId, candidateId);
+    }
+
+    public Long getTotalVotesForPosition(Long electionId, Long positionId) {
+        return voteRepository.countVotesByElectionAndPosition(electionId, positionId);
     }
 }

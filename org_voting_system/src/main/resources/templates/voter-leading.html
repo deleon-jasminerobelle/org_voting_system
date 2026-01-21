@@ -22,10 +22,9 @@
             font-family: 'Inter', sans-serif; 
         }
         
-        body { 
-            background: var(--bg); 
-            color: #374151; 
-            overflow: hidden; 
+        body {
+            background: var(--bg);
+            color: #374151;
         }
         
         .app-container { 
@@ -422,13 +421,13 @@
         <aside class="sidebar">
             <div class="sidebar-header"><h2>E-VOTE <span>VOTER</span></h2></div>
             <div class="voter-profile">
-                <img src="https://ui-avatars.com/api/?name=Juan+Dela+Cruz&background=FFC107&color=7b0000" class="profile-img">
-                <span class="voter-name">Juan Dela Cruz</span>
-                <span class="voter-id">Student ID: 2024-001</span>
+                <img th:src="@{https://ui-avatars.com/api/?name={name}&background=FFC107&color=7b0000(name=${user.firstName + '+' + user.lastName})}" class="profile-img">
+                <span class="voter-name" th:text="${user.firstName + ' ' + user.lastName}">Juan Dela Cruz</span>
+                <span class="voter-id" th:text="'ID: ' + ${user.userId}">Student ID: 2024-001</span>
             </div>
             <nav class="nav-links">
-                <div class="nav-item" onclick="location.href='voter-dashboard.html'"><i class="fas fa-home"></i> Dashboard</div>
-                <div class="nav-item" onclick="location.href='voter-vote.html'"><i class="fas fa-vote-yea"></i> Vote Now</div>
+                <div class="nav-item" onclick="location.href='/voter/dashboard'"><i class="fas fa-home"></i> Dashboard</div>
+                <div class="nav-item" onclick="location.href='/voter/vote-now'"><i class="fas fa-vote-yea"></i> Vote Now</div>
                 <div class="nav-item active"><i class="fas fa-chart-line"></i> Leading</div>
             </nav>
             <div class="logout-section">
@@ -443,48 +442,47 @@
                 <p><i class="fas fa-info-circle" style="color: var(--maroon);"></i> <strong>Note:</strong> Results are updated in real-time during the election period.</p>
             </div>
 
-            <!-- Election Selector -->
-            <div class="election-selector" th:if="${elections != null and !elections.isEmpty()}">
-                <button class="election-btn"
-                        th:each="election, iterStat : ${elections}"
-                        th:classappend="${iterStat.index == 0} ? 'active' : ''"
-                        th:text="${election.title}"
-                        th:onclick="'selectElection(this, ' + ${election.electionId} + ')'">
-                    Election Name
-                </button>
+            <!-- Dynamic Election Results -->
+            <div th:each="election : ${activeElections}" class="card">
+                <h3><i class="fas fa-graduation-cap"></i> <span th:text="${election.title}">Election Title</span> - Current Results</h3>
+
+                <div th:each="position : ${election.positions}" class="position-results">
+                    <div class="position-title">
+                        <i class="fas fa-user-tie"></i> <span th:text="${position.positionName}">Position Name</span>
+                    </div>
+                    <div class="results-list">
+                        <div th:each="candidate, iterStat : ${position.candidates}" class="result-item"
+                             th:with="voteCount=${candidateVoteCounts[election.electionId][candidate.candidateId] != null ? candidateVoteCounts[election.electionId][candidate.candidateId] : 0},
+                                     totalVotes=${positionTotalVotes[election.electionId][position.positionId] != null ? positionTotalVotes[election.electionId][position.positionId] : 1},
+                                     percentage=${totalVotes > 0 ? (voteCount * 100.0 / totalVotes) : 0}">
+                            <div class="rank-badge"
+                                 th:classappend="${iterStat.index == 0} ? 'rank-1' : (${iterStat.index == 1} ? 'rank-2' : (${iterStat.index == 2} ? 'rank-3' : 'rank-other'))">
+                                <span th:text="${iterStat.index + 1}">1</span>
+                            </div>
+                            <div class="candidate-info">
+                                <div class="candidate-name-result">
+                                    <span th:text="${candidate.fullName}">Candidate Name</span>
+                                    <i class="fas fa-crown winner-crown" th:if="${iterStat.index == 0}"></i>
+                                </div>
+                                <div class="candidate-party-result" th:text="${candidate.platform}">Platform</div>
+                            </div>
+                            <div class="vote-stats">
+                                <div class="vote-count" th:text="${voteCount}">0</div>
+                                <div class="vote-percentage" th:text="${#numbers.formatDecimal(percentage, 1, 1)} + '%'">0%</div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" th:style="'width: ' + ${percentage} + '%;'"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="total-votes">
+                            <strong>Total Votes:</strong> <span th:text="${positionTotalVotes[election.electionId][position.positionId] != null ? positionTotalVotes[election.electionId][position.positionId] : 0}">0</span>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <!-- Dynamic Position Results -->
-            <div class="position-results" th:each="position : ${positionResults}">
-                <div class="position-title">
-                    <i class="fas fa-user-tie"></i> <span th:text="${position.name}">Position</span>
-                </div>
-                <div class="results-list">
-                    <div class="result-item" th:each="result, iterStat : ${position.results}">
-                        <div class="rank-badge" 
-                             th:classappend="${iterStat.index == 0} ? 'rank-1' : (${iterStat.index == 1} ? 'rank-2' : (${iterStat.index == 2} ? 'rank-3' : 'rank-other'))">
-                            <span th:text="${iterStat.index + 1} + 'st'"></span>
-                        </div>
-                        <div class="candidate-info">
-                            <div class="candidate-name-result">
-                                <span th:text="${result.candidateName}">Candidate</span>
-                                <i class="fas fa-crown winner-crown" th:if="${iterStat.index == 0}"></i>
-                            </div>
-                            <div class="candidate-party-result" th:text="${result.party}">Party</div>
-                        </div>
-                        <div class="vote-stats">
-                            <div class="vote-count" th:text="${result.voteCount}">0</div>
-                            <div class="vote-percentage" th:text="${result.percentage + '%'}">0%</div>
-                            <div class="progress-bar">
-                                <div class="progress-fill" th:style="'width: ' + ${result.percentage} + '%;'"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="total-votes" th:if="${position.totalVotes != null}">
-                        <strong>Total Votes:</strong> <span th:text="${position.totalVotes}">0</span> | 
-                        <strong>Voter Turnout:</strong> <span th:text="${position.turnout + '%'}">0%</span>
-                    </div>
-                </div>
+            <div th:if="${#lists.isEmpty(activeElections)}" class="card">
+                <p class="no-results">No active elections at the moment.</p>
             </div>
         </main>
     </div>
@@ -494,7 +492,7 @@
             document.querySelectorAll('.election-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             // Reload page with selected election
-            window.location.href = 'voter-leading.html?electionId=' + electionId;
+            window.location.href = '/voter/leading?electionId=' + electionId;
         }
 
         function openLogoutModal() { document.getElementById('logoutModal').style.display = 'flex'; }

@@ -8,6 +8,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,6 +26,7 @@ import com.organization.org_voting_system.entity.Position;
 import com.organization.org_voting_system.entity.User;
 import com.organization.org_voting_system.service.CandidateService;
 import com.organization.org_voting_system.service.ElectionService;
+import com.organization.org_voting_system.service.PdfService;
 import com.organization.org_voting_system.service.PositionService;
 import com.organization.org_voting_system.service.UserService;
 import com.organization.org_voting_system.service.VoteService;
@@ -47,6 +51,9 @@ public class AdminController {
     @Autowired
     private VoteService voteService;
 
+    @Autowired
+    private PdfService pdfService;
+
     @GetMapping("/dashboard")
     public String dashboard(Model model, Principal principal, @RequestParam(defaultValue = "dashboard") String activeSection) {
         User currentUser = userService.findByUsernameOptional(principal.getName())
@@ -61,6 +68,7 @@ public class AdminController {
             return "redirect:/login?error=access_denied";
         }
 
+        electionService.updateElectionStatuses(); // Ensure statuses are current
         List<Election> allElections = electionService.findAll();
         List<User> allUsers = userService.getAllUsers();
         List<Position> allPositions = positionService.findAll();
@@ -68,6 +76,7 @@ public class AdminController {
 
         // Prepare vote counts for analytics
         Map<Long, Long> candidateVoteCounts = new HashMap<>();
+        Map<Long, List<Candidate>> electionCandidates = new HashMap<>();
         try {
             for (Candidate candidate : allCandidates) {
                 if (candidate != null && candidate.getPosition() != null && candidate.getPosition().getElection() != null) {
@@ -77,6 +86,10 @@ public class AdminController {
                         candidate.getCandidateId()
                     );
                     candidateVoteCounts.put(candidate.getCandidateId(), voteCount != null ? voteCount : 0L);
+
+                    // Group candidates by election
+                    Long electionId = candidate.getPosition().getElection().getElectionId();
+                    electionCandidates.computeIfAbsent(electionId, k -> new java.util.ArrayList<>()).add(candidate);
                 }
             }
         } catch (Exception e) {
@@ -90,6 +103,7 @@ public class AdminController {
         model.addAttribute("allPositions", allPositions);
         model.addAttribute("allCandidates", allCandidates);
         model.addAttribute("candidateVoteCounts", candidateVoteCounts);
+        model.addAttribute("electionCandidates", electionCandidates);
         model.addAttribute("activeSection", activeSection);
 
         return "admin-dashboard";
@@ -136,6 +150,39 @@ public class AdminController {
             redirectAttributes.addFlashAttribute("success", "Election closed successfully!");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Failed to close election: " + e.getMessage());
+        }
+        return "redirect:/admin/dashboard?activeSection=elections";
+    }
+
+    @PostMapping("/election/{id}/edit")
+    public String editElection(@PathVariable Long id,
+                              @RequestParam String title,
+                              @RequestParam String description,
+                              @RequestParam String organization,
+                              @RequestParam String startDatetime,
+                              @RequestParam String endDatetime,
+                              RedirectAttributes redirectAttributes) {
+        try {
+            Election election = electionService.findById(id);
+            if (election == null) {
+                redirectAttributes.addFlashAttribute("error", "Election not found!");
+                return "redirect:/admin/dashboard?activeSection=elections";
+            }
+
+            // Parse datetime strings with proper error handling
+            LocalDateTime start = LocalDateTime.parse(startDatetime);
+            LocalDateTime end = LocalDateTime.parse(endDatetime);
+
+            election.setTitle(title);
+            election.setDescription(description);
+            election.setOrganization(organization);
+            election.setStartDatetime(start);
+            election.setEndDatetime(end);
+
+            electionService.updateElection(election);
+            redirectAttributes.addFlashAttribute("success", "Election updated successfully!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Failed to update election: Invalid date format or " + e.getMessage());
         }
         return "redirect:/admin/dashboard?activeSection=elections";
     }
@@ -436,5 +483,45 @@ public class AdminController {
             redirectAttributes.addFlashAttribute("error", "Failed to restore database: " + e.getMessage());
         }
         return "redirect:/admin/dashboard?activeSection=system-settings";
+    }
+
+    // ================= PDF EXPORT =================
+
+    @GetMapping("/export-pdf")
+    public ResponseEntity<byte[]> exportElectionReportPdf() {
+        try {
+            List<Election> allElections = electionService.findAll();
+            List<Candidate> allCandidates = candidateService.findAll();
+
+            // Prepare data for PDF
+            Map<Long, Long> candidateVoteCounts = new HashMap<>();
+            Map<Long, List<Candidate>> electionCandidates = new HashMap<>();
+
+            for (Candidate candidate : allCandidates) {
+                if (candidate != null && candidate.getPosition() != null && candidate.getPosition().getElection() != null) {
+                    Long voteCount = voteService.getVoteCountForCandidate(
+                        candidate.getPosition().getElection().getElectionId(),
+                        candidate.getPosition().getPositionId(),
+                        candidate.getCandidateId()
+                    );
+                    candidateVoteCounts.put(candidate.getCandidateId(), voteCount != null ? voteCount : 0L);
+
+                    Long electionId = candidate.getPosition().getElection().getElectionId();
+                    electionCandidates.computeIfAbsent(electionId, k -> new java.util.ArrayList<>()).add(candidate);
+                }
+            }
+
+            byte[] pdfBytes = pdfService.generateElectionReportPdf(allElections, electionCandidates, candidateVoteCounts);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_PDF);
+            headers.setContentDispositionFormData("attachment", "election_report.pdf");
+
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .body(pdfBytes);
+        } catch (Exception e) {
+            throw new RuntimeException("Error generating PDF report", e);
+        }
     }
 }

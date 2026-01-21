@@ -41,18 +41,22 @@ public class Vote {
     @Column(name = "vote_hash", nullable = false)
     private String voteHash;
 
+    @Column(name = "voter_token", nullable = false)
+    private String voterToken;
+
     @Column(name = "voted_at", nullable = false, updatable = false)
     private LocalDateTime votedAt = LocalDateTime.now();
 
     // Constructors
     public Vote() {}
 
-    public Vote(Election election, Position position, Candidate candidate, User voter, String voteHash) {
+    public Vote(Election election, Position position, Candidate candidate, User voter, String voteHash, String voterToken) {
         this.election = election;
         this.position = position;
         this.candidate = candidate;
         this.voter = voter;
         this.voteHash = voteHash;
+        this.voterToken = voterToken;
     }
 
     // Getters and Setters
@@ -73,6 +77,9 @@ public class Vote {
 
     public String getVoteHash() { return voteHash; }
     public void setVoteHash(String voteHash) { this.voteHash = voteHash; }
+
+    public String getVoterToken() { return voterToken; }
+    public void setVoterToken(String voterToken) { this.voterToken = voterToken; }
 
     public LocalDateTime getVotedAt() { return votedAt; }
     public void setVotedAt(LocalDateTime votedAt) { this.votedAt = votedAt; }

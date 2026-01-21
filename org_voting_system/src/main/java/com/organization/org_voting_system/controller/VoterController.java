@@ -3,9 +3,12 @@ package com.organization.org_voting_system.controller;
 import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,10 +16,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.organization.org_voting_system.entity.Candidate;
 import com.organization.org_voting_system.entity.Election;
+import com.organization.org_voting_system.entity.Position;
 import com.organization.org_voting_system.entity.User;
+import com.organization.org_voting_system.service.CandidateService;
 import com.organization.org_voting_system.service.ElectionService;
 import com.organization.org_voting_system.service.UserService;
 import com.organization.org_voting_system.service.VoteService;
@@ -28,12 +33,15 @@ public class VoterController {
 
     @Autowired
     private ElectionService electionService;
-    
+
     @Autowired
     private UserService userService;
-    
+
     @Autowired
     private VoteService voteService;
+
+    @Autowired
+    private CandidateService candidateService;
 
     @GetMapping("/dashboard")
     public String dashboard(Model model, Principal principal) {
@@ -64,13 +72,37 @@ public class VoterController {
             // ignore
         }
 
+        // Calculate vote counts for active elections
+        Map<Long, Map<Long, Long>> candidateVoteCounts = new HashMap<>();
+        Map<Long, Map<Long, Long>> positionTotalVotes = new HashMap<>();
+        try {
+            for (Election election : activeElections) {
+                if (election.getPositions() != null) {
+                    for (Position position : election.getPositions()) {
+                        List<Candidate> candidates = candidateService.findByPosition(position);
+                        long totalForPosition = 0;
+                        for (Candidate candidate : candidates) {
+                            Long count = voteService.getVoteCountForCandidate(election.getElectionId(), position.getPositionId(), candidate.getCandidateId());
+                            candidateVoteCounts.computeIfAbsent(election.getElectionId(), k -> new HashMap<>()).put(candidate.getCandidateId(), count);
+                            totalForPosition += count;
+                        }
+                        positionTotalVotes.computeIfAbsent(election.getElectionId(), k -> new HashMap<>()).put(position.getPositionId(), totalForPosition);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            // ignore
+        }
+
         model.addAttribute("user", currentUser);
         model.addAttribute("activeElections", activeElections);
         model.addAttribute("upcomingElections", upcomingElections);
         model.addAttribute("votedElections", votedElections);
+        model.addAttribute("candidateVoteCounts", candidateVoteCounts);
+        model.addAttribute("positionTotalVotes", positionTotalVotes);
         model.addAttribute("currentTime", LocalDateTime.now());
 
-        return "voter/voter-dashboard";
+        return "voter-dashboard";
     }
 
     @GetMapping("/home")
@@ -90,7 +122,7 @@ public class VoterController {
         return "voter/home";
     }
 
-    @GetMapping("vote-now")
+    @GetMapping("/vote-now")
     public String voteNow(Model model, Principal principal) {
         User currentUser = userService.findByUsername(principal.getName());
         if (currentUser == null) {
@@ -107,12 +139,19 @@ public class VoterController {
         model.addAttribute("upcomingElections", upcomingElections);
         model.addAttribute("election", election);
         if (election != null) {
-            // Assuming positions are loaded with election
-            model.addAttribute("positions", election.getPositions());
+            // Load candidates for each position
+            List<Position> positions = election.getPositions();
+            if (positions != null) {
+                for (Position position : positions) {
+                    List<Candidate> candidates = candidateService.findByPosition(position);
+                    position.setCandidates(candidates);
+                }
+            }
+            model.addAttribute("positions", positions);
         }
         model.addAttribute("currentTime", LocalDateTime.now());
 
-        return "voter/vote-now";
+        return "voter-vote";
     }
 
     @GetMapping("/leading")
@@ -123,10 +162,40 @@ public class VoterController {
         }
         List<Election> activeElections = electionService.getActiveElections();
 
+        // Calculate vote counts for leading candidates
+        Map<Long, Map<Long, Long>> candidateVoteCounts = new HashMap<>();
+        Map<Long, Map<Long, Long>> positionTotalVotes = new HashMap<>();
+        try {
+            for (Election election : activeElections) {
+                if (election.getPositions() != null) {
+                    for (Position position : election.getPositions()) {
+                        List<Candidate> candidates = candidateService.findByPosition(position);
+                        // Sort candidates by vote count descending
+                        candidates.sort((c1, c2) -> Long.compare(
+                            voteService.getVoteCountForCandidate(election.getElectionId(), position.getPositionId(), c2.getCandidateId()),
+                            voteService.getVoteCountForCandidate(election.getElectionId(), position.getPositionId(), c1.getCandidateId())
+                        ));
+                        position.setCandidates(candidates); // Set candidates on position for template
+                        long totalForPosition = 0;
+                        for (Candidate candidate : candidates) {
+                            Long count = voteService.getVoteCountForCandidate(election.getElectionId(), position.getPositionId(), candidate.getCandidateId());
+                            candidateVoteCounts.computeIfAbsent(election.getElectionId(), k -> new HashMap<>()).put(candidate.getCandidateId(), count);
+                            totalForPosition += count;
+                        }
+                        positionTotalVotes.computeIfAbsent(election.getElectionId(), k -> new HashMap<>()).put(position.getPositionId(), totalForPosition);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            // ignore
+        }
+
         model.addAttribute("user", currentUser);
         model.addAttribute("activeElections", activeElections);
+        model.addAttribute("candidateVoteCounts", candidateVoteCounts);
+        model.addAttribute("positionTotalVotes", positionTotalVotes);
 
-        return "voter/leading";
+        return "voter-leading";
     }
 
     @GetMapping("/voting-status")
@@ -171,36 +240,31 @@ public class VoterController {
     }
 
     @PostMapping("/vote")
-    public String submitVote(@RequestParam Long electionId, 
+    public ResponseEntity<String> submitVote(@RequestParam Long electionId,
                            @RequestParam Long positionId,
                            @RequestParam Long candidateId,
-                           Principal principal,
-                           RedirectAttributes redirectAttributes) {
+                           Principal principal) {
         try {
             User currentUser = userService.findByUsername(principal.getName());
-            
+
             // Validate election is active
             Election election = electionService.findById(electionId);
             if (!election.getStatus().equals(Election.Status.ACTIVE)) {
-                redirectAttributes.addFlashAttribute("error", "Election is not active");
-                return "redirect:/voter/dashboard";
+                return ResponseEntity.badRequest().body("Election is not active");
             }
-            
+
             // Check if user has already voted for this position
             if (voteService.hasUserVotedForPosition(currentUser.getUserId(), electionId, positionId)) {
-                redirectAttributes.addFlashAttribute("error", "You have already voted for this position");
-                return "redirect:/voter/election/" + electionId;
+                return ResponseEntity.badRequest().body("You have already voted for this position");
             }
-            
+
             // Submit vote
             voteService.submitVote(electionId, positionId, candidateId, currentUser.getUserId());
-            
-            redirectAttributes.addFlashAttribute("success", "Your vote has been submitted successfully");
-            return "redirect:/voter/election/" + electionId;
-            
+
+            return ResponseEntity.ok("Vote submitted successfully");
+
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Failed to submit vote: " + e.getMessage());
-            return "redirect:/voter/election/" + electionId;
+            return ResponseEntity.badRequest().body("Failed to submit vote: " + e.getMessage());
         }
     }
 

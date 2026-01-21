@@ -390,48 +390,48 @@
         <aside class="sidebar">
             <div class="sidebar-header"><h2>E-VOTE <span>VOTER</span></h2></div>
             <div class="voter-profile">
-                <img src="https://ui-avatars.com/api/?name=Juan+Dela+Cruz&background=FFC107&color=7b0000" class="profile-img">
-                <span class="voter-name">Juan Dela Cruz</span>
-                <span class="voter-id">Student ID: 2024-001</span>
+                <img th:src="@{https://ui-avatars.com/api/?name={name}&background=FFC107&color=7b0000(name=${user.firstName + '+' + user.lastName})}" class="profile-img">
+                <span class="voter-name" th:text="${user.firstName + ' ' + user.lastName}">Juan Dela Cruz</span>
+                <span class="voter-id" th:text="'ID: ' + ${user.userId}">Student ID: 2024-001</span>
             </div>
             <nav class="nav-links">
-                <div class="nav-item" onclick="location.href='voter-dashboard.html'"><i class="fas fa-home"></i> Dashboard</div>
+                <div class="nav-item" onclick="location.href='/voter/dashboard'"><i class="fas fa-home"></i> Dashboard</div>
                 <div class="nav-item active"><i class="fas fa-vote-yea"></i> Vote Now</div>
-                <div class="nav-item" onclick="location.href='voter-leading.html'"><i class="fas fa-chart-line"></i> Leading</div>
+                <div class="nav-item" onclick="location.href='/voter/leading'"><i class="fas fa-chart-line"></i> Leading</div>
             </nav>
             <div class="logout-section">
                 <button class="btn-logout" onclick="openLogoutModal()"><i class="fas fa-sign-out-alt"></i> Logout</button>
             </div>
         </aside>
 
-        <main class="main-content">
+        <main class="main-content" th:attr="data-election-id=${election != null ? election.electionId : ''}">
             <h1 class="page-title" th:text="${election != null ? election.title : 'Vote Now'}">Vote Now</h1>
             
             <div class="card" style="margin-bottom: 15px;" th:if="${election != null}">
-                <p><i class="fas fa-info-circle" style="color: var(--maroon);"></i> <strong>Election Period:</strong> <span th:text="${election.startDate + ' - ' + election.endDate}"></span></p>
+                <p><i class="fas fa-info-circle" style="color: var(--maroon);"></i> <strong>Election Period:</strong> <span th:text="${#temporals.format(election.startDatetime, 'MMM dd, yyyy')} + ' - ' + ${#temporals.format(election.endDatetime, 'MMM dd, yyyy')}"></span></p>
                 <p style="margin-top: 8px; color: #6b7280;">Select one candidate for each position. Click on a candidate card to select them.</p>
             </div>
 
             <!-- Dynamic Position Sections -->
             <div class="position-section" th:each="position : ${positions}">
                 <div class="position-header">
-                    <i class="fas fa-user-tie"></i> <span th:text="${position.name}">Position</span>
+                    <i class="fas fa-user-tie"></i> <span th:text="${position.positionName}">Position</span>
                 </div>
                 <div class="candidates-grid">
                     <div class="candidate-card" th:each="candidate : ${position.candidates}"
-                         th:onclick="'selectCandidate(this, \'' + ${position.positionId} + '\')"
+                         th:onclick="|selectCandidate(this, '${position.positionId}')|"
                          th:attr="data-candidate-id=${candidate.candidateId}">
-                        <img th:src="'https://ui-avatars.com/api/?name=' + ${candidate.name} + '&background=FFC107&color=7b0000&size=100'" 
-                             class="candidate-img" th:alt="${candidate.name}">
-                        <div class="candidate-name" th:text="${candidate.name}">Candidate Name</div>
-                        <div class="candidate-party" th:text="${candidate.party}">Party</div>
+                        <img th:src="'https://ui-avatars.com/api/?name=' + ${candidate.fullName} + '&background=FFC107&color=7b0000&size=100'"
+                             class="candidate-img" th:alt="${candidate.fullName}">
+                        <div class="candidate-name" th:text="${candidate.fullName}">Candidate Name</div>
+                        <div class="candidate-party" th:text="${candidate.platform}">Party</div>
                         <div class="select-indicator"><i class="fas fa-check-circle"></i> Selected</div>
                     </div>
                 </div>
             </div>
 
             <div class="vote-actions">
-                <button class="btn-secondary" onclick="location.href='voter-dashboard.html'">Cancel</button>
+                <button class="btn-secondary" onclick="location.href='/voter/dashboard'">Cancel</button>
                 <button class="btn-primary" onclick="openConfirmModal()"><i class="fas fa-paper-plane"></i> Submit Vote</button>
             </div>
         </main>
@@ -462,22 +462,41 @@
 
         function closeConfirmModal() { document.getElementById('confirmVoteModal').style.display = 'none'; }
         
-        function submitVote() {
-            // Submit votes to backend
-            fetch('/api/vote/submit', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(selectedVotes)
-            })
-            .then(response => response.json())
-            .then(data => {
-                alert('Vote submitted successfully!');
-                window.location.href = 'voter-dashboard.html';
-            })
-            .catch(error => {
-                alert('Error submitting vote. Please try again.');
-                console.error('Error:', error);
-            });
+        async function submitVote() {
+            const confirmButton = document.querySelector('#confirmVoteModal .btn-yes');
+            confirmButton.disabled = true;
+            confirmButton.textContent = 'Submitting...';
+
+            const electionId = document.querySelector('[data-election-id]').getAttribute('data-election-id');
+
+            for (const [positionId, candidateId] of Object.entries(selectedVotes)) {
+                try {
+                    const response = await fetch('/voter/vote', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: new URLSearchParams({
+                            electionId: electionId,
+                            positionId: positionId,
+                            candidateId: candidateId
+                        })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`Failed to submit vote for position ${positionId}`);
+                    }
+                } catch (error) {
+                    alert('Error submitting vote. Please try again.');
+                    console.error('Error:', error);
+                    confirmButton.disabled = false;
+                    confirmButton.textContent = 'Confirm Vote';
+                    return;
+                }
+            }
+
+            alert('All votes submitted successfully!');
+            window.location.href = '/voter/dashboard';
         }
     </script>
 </body>

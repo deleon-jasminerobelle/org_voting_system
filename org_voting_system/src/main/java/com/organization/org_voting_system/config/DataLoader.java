@@ -116,12 +116,12 @@ public class DataLoader implements CommandLineRunner {
         // ================= Create Sample Election =================
         if (electionRepository.count() == 0) {
             Election election = new Election();
-            election.setTitle("Student Council Election 2024");
+            election.setTitle("Student Council Election 2026");
             election.setDescription("Election for student council positions");
             election.setOrganization("Organization");
-            election.setStartDatetime(LocalDateTime.of(2024, 1, 15, 8, 0));
-            election.setEndDatetime(LocalDateTime.of(2024, 1, 20, 17, 0));
-            election.setStatus(Election.Status.ACTIVE);
+            election.setStartDatetime(LocalDateTime.now().minusHours(1));
+            election.setEndDatetime(LocalDateTime.now().plusHours(24));
+            election.setStatus(Election.Status.UPCOMING);
             election.setCreatedAt(LocalDateTime.now());
             electionRepository.save(election);
 
@@ -136,12 +136,12 @@ public class DataLoader implements CommandLineRunner {
             positionRepository.save(secretary);
 
             // Create candidates
-            candidateRepository.save(new Candidate(president, "Juan Dela Cruz", "Experienced leader with vision for the future"));
-            candidateRepository.save(new Candidate(president, "Maria Santos", "Dedicated to student welfare and academic excellence"));
-            candidateRepository.save(new Candidate(vicePresident, "Pedro Reyes", "Focused on innovation and technology"));
-            candidateRepository.save(new Candidate(vicePresident, "Ana Garcia", "Committed to environmental sustainability"));
-            candidateRepository.save(new Candidate(secretary, "Carlos Lopez", "Organized and detail-oriented"));
-            candidateRepository.save(new Candidate(secretary, "Sofia Martinez", "Excellent communication skills"));
+            candidateRepository.save(new Candidate(president, "Juan Dela Cruz", "Experienced leader with vision for the future", "Innovation and Excellence"));
+            candidateRepository.save(new Candidate(president, "Maria Santos", "Dedicated to student welfare and academic excellence", "Unity and Progress"));
+            candidateRepository.save(new Candidate(vicePresident, "Pedro Reyes", "Focused on innovation and technology", "Tech for All"));
+            candidateRepository.save(new Candidate(vicePresident, "Ana Garcia", "Committed to environmental sustainability", "Green Future"));
+            candidateRepository.save(new Candidate(secretary, "Carlos Lopez", "Organized and detail-oriented", "Efficiency First"));
+            candidateRepository.save(new Candidate(secretary, "Sofia Martinez", "Excellent communication skills", "Connect and Communicate"));
         }
     }
 }

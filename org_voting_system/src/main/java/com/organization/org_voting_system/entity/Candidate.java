@@ -29,6 +29,9 @@ public class Candidate {
     @Column(length = 1000)
     private String description;
 
+    @Column(length = 500)
+    private String platform;
+
     // Constructors
     public Candidate() {}
 
@@ -36,6 +39,13 @@ public class Candidate {
         this.position = position;
         this.fullName = fullName;
         this.description = description;
+    }
+
+    public Candidate(Position position, String fullName, String description, String platform) {
+        this.position = position;
+        this.fullName = fullName;
+        this.description = description;
+        this.platform = platform;
     }
 
     // Getters and Setters
@@ -50,4 +60,7 @@ public class Candidate {
 
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
+
+    public String getPlatform() { return platform; }
+    public void setPlatform(String platform) { this.platform = platform; }
 }
