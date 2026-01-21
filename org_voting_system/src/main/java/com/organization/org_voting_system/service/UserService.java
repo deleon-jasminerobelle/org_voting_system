@@ -81,6 +81,10 @@ public class UserService {
         return userRepository.findByUsername(username).orElse(null);
     }
 
+    public Optional<User> findById(Long id) {
+        return userRepository.findById(id);
+    }
+
     // ================= CRUD =================
 
     public List<User> getAllUsers() {
@@ -107,5 +111,39 @@ public class UserService {
 
     public boolean existsByEmail(String email) {
         return userRepository.findByEmail(email).isPresent();
+    }
+
+    public User createUser(String username, String email, String firstName, String lastName, String password, Long roleId) {
+        if (existsByUsername(username)) {
+            throw new RuntimeException("Username already exists");
+        }
+        if (existsByEmail(email)) {
+            throw new RuntimeException("Email already exists");
+        }
+
+        User user = new User();
+        user.setUsername(username);
+        user.setEmail(email);
+        user.setFirstName(firstName);
+        user.setLastName(lastName);
+        user.setPassword(password); // Will be encoded in registerUser
+
+        // Build full name
+        String middleName = ""; // Assuming no middle name for admin created users
+        user.setFullName(firstName + " " + lastName);
+
+        // Assign role based on roleId
+        Role role = roleRepository.findById(roleId).orElseThrow(() -> new RuntimeException("Role not found"));
+        user.setRole(role);
+
+        // Default values
+        user.setIsActive(true);
+        user.setHasVoted(false);
+        user.setCreatedAt(LocalDateTime.now());
+
+        // Encode password
+        user.setPassword(passwordEncoder.encode(password));
+
+        return userRepository.save(user);
     }
 }

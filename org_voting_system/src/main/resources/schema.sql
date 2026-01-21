@@ -29,6 +29,7 @@ CREATE TABLE IF NOT EXISTS elections (
     election_id BIGINT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     description TEXT,
+    organization VARCHAR(255) NOT NULL,
     start_datetime TIMESTAMP NOT NULL,
     end_datetime TIMESTAMP NOT NULL,
     status ENUM('UPCOMING', 'ACTIVE', 'CLOSED') DEFAULT 'UPCOMING',

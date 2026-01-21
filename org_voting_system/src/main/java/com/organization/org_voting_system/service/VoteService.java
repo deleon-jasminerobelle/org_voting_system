@@ -114,4 +114,8 @@ public class VoteService {
     public List<Election> getElectionsVotedByUser(Long userId) {
         return voteRepository.findDistinctElectionsByVoterUserId(userId);
     }
+
+    public Long getVoteCountForCandidate(Long electionId, Long positionId, Long candidateId) {
+        return voteRepository.countVotesByElectionPositionAndCandidate(electionId, positionId, candidateId);
+    }
 }

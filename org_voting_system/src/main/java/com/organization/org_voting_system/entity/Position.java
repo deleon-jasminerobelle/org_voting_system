@@ -30,6 +30,9 @@ public class Position {
     @Column(name = "position_name", nullable = false)
     private String positionName;
 
+    @Column(name = "description")
+    private String description;
+
     @Column(name = "max_votes", nullable = false)
     private Integer maxVotes = 1;
 
@@ -54,6 +57,9 @@ public class Position {
 
     public String getPositionName() { return positionName; }
     public void setPositionName(String positionName) { this.positionName = positionName; }
+
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
 
     public Integer getMaxVotes() { return maxVotes; }
     public void setMaxVotes(Integer maxVotes) { this.maxVotes = maxVotes; }

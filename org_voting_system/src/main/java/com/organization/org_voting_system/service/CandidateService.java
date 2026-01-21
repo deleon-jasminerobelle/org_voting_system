@@ -19,7 +19,7 @@ public class CandidateService {
     // ================= CRUD =================
 
     public List<Candidate> findAll() {
-        return candidateRepository.findAll();
+        return candidateRepository.findAllWithPosition();
     }
 
     public Optional<Candidate> findById(Long id) {

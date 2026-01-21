@@ -445,11 +445,11 @@
 
             <!-- Election Selector -->
             <div class="election-selector" th:if="${elections != null and !elections.isEmpty()}">
-                <button class="election-btn" 
+                <button class="election-btn"
                         th:each="election, iterStat : ${elections}"
                         th:classappend="${iterStat.index == 0} ? 'active' : ''"
                         th:text="${election.title}"
-                        th:onclick="'selectElection(this, ' + ${election.id} + ')'">
+                        th:onclick="'selectElection(this, ' + ${election.electionId} + ')'">
                     Election Name
                 </button>
             </div>

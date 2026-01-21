@@ -32,6 +32,9 @@ public class Election {
     @Column(length = 1000)
     private String description;
 
+    @Column(nullable = false)
+    private String organization;
+
     @Column(name = "start_datetime", nullable = false)
     private LocalDateTime startDatetime;
 
@@ -55,9 +58,10 @@ public class Election {
     // Constructors
     public Election() {}
 
-    public Election(String title, String description, LocalDateTime startDatetime, LocalDateTime endDatetime, User createdBy) {
+    public Election(String title, String description, String organization, LocalDateTime startDatetime, LocalDateTime endDatetime, User createdBy) {
         this.title = title;
         this.description = description;
+        this.organization = organization;
         this.startDatetime = startDatetime;
         this.endDatetime = endDatetime;
         this.createdBy = createdBy;
@@ -72,6 +76,9 @@ public class Election {
 
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
+
+    public String getOrganization() { return organization; }
+    public void setOrganization(String organization) { this.organization = organization; }
 
     public LocalDateTime getStartDatetime() { return startDatetime; }
     public void setStartDatetime(LocalDateTime startDatetime) { this.startDatetime = startDatetime; }

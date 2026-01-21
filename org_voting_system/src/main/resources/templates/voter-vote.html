@@ -418,9 +418,9 @@
                     <i class="fas fa-user-tie"></i> <span th:text="${position.name}">Position</span>
                 </div>
                 <div class="candidates-grid">
-                    <div class="candidate-card" th:each="candidate : ${position.candidates}" 
-                         th:onclick="'selectCandidate(this, \'' + ${position.id} + '\')'"
-                         th:attr="data-candidate-id=${candidate.id}">
+                    <div class="candidate-card" th:each="candidate : ${position.candidates}"
+                         th:onclick="'selectCandidate(this, \'' + ${position.positionId} + '\')"
+                         th:attr="data-candidate-id=${candidate.candidateId}">
                         <img th:src="'https://ui-avatars.com/api/?name=' + ${candidate.name} + '&background=FFC107&color=7b0000&size=100'" 
                              class="candidate-img" th:alt="${candidate.name}">
                         <div class="candidate-name" th:text="${candidate.name}">Candidate Name</div>

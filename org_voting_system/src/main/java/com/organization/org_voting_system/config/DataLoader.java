@@ -118,6 +118,7 @@ public class DataLoader implements CommandLineRunner {
             Election election = new Election();
             election.setTitle("Student Council Election 2024");
             election.setDescription("Election for student council positions");
+            election.setOrganization("Organization");
             election.setStartDatetime(LocalDateTime.of(2024, 1, 15, 8, 0));
             election.setEndDatetime(LocalDateTime.of(2024, 1, 20, 17, 0));
             election.setStatus(Election.Status.ACTIVE);
