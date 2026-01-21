@@ -36,7 +36,10 @@ public class Role {
     public RoleName getRoleName() { return roleName; }
     public void setRoleName(RoleName roleName) { this.roleName = roleName; }
 
+    // ✅ FIXED ENUM
     public enum RoleName {
-        admin, election_officer, voter
+        ROLE_ADMIN,
+        ROLE_VOTER,
+        ROLE_ELECTION_OFFICER
     }
 }

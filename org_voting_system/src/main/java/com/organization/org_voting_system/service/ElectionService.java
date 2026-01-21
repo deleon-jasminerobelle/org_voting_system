@@ -20,6 +20,10 @@ public class ElectionService {
         return electionRepository.save(election);
     }
 
+    public List<Election> findAll() {
+        return electionRepository.findAll();
+    }
+
     public List<Election> getAllElections() {
         return electionRepository.findAll();
     }
@@ -45,6 +49,9 @@ public class ElectionService {
         List<Election> elections = electionRepository.findAll();
 
         for (Election election : elections) {
+            if (election.getStartDatetime() == null || election.getEndDatetime() == null) {
+                continue;
+            }
             if (now.isBefore(election.getStartDatetime())) {
                 election.setStatus(Election.Status.UPCOMING);
             } else if (now.isAfter(election.getStartDatetime()) && now.isBefore(election.getEndDatetime())) {
@@ -52,6 +59,29 @@ public class ElectionService {
             } else if (now.isAfter(election.getEndDatetime())) {
                 election.setStatus(Election.Status.CLOSED);
             }
+            electionRepository.save(election);
+        }
+    }
+    
+    // Additional methods for voter functionality
+    public List<Election> getActiveElections() {
+        updateElectionStatuses(); // Ensure statuses are current
+        return electionRepository.findByStatus(Election.Status.ACTIVE);
+    }
+    
+    public List<Election> getUpcomingElections() {
+        updateElectionStatuses(); // Ensure statuses are current
+        return electionRepository.findByStatus(Election.Status.UPCOMING);
+    }
+    
+    public Election findById(Long id) {
+        return electionRepository.findById(id).orElse(null);
+    }
+
+    public void closeElection(Long id) {
+        Election election = electionRepository.findById(id).orElse(null);
+        if (election != null) {
+            election.setStatus(Election.Status.CLOSED);
             electionRepository.save(election);
         }
     }

@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-VOTE VOTER SYSTEM - Leading</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --maroon: #7b0000;
+            --gold: #FFC107;
+            --bg: #f3f4f6;
+            --white: #ffffff;
+            --danger: #ef4444;
+        }
+
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+            font-family: 'Inter', sans-serif; 
+        }
+        
+        body { 
+            background: var(--bg); 
+            color: #374151; 
+            overflow: hidden; 
+        }
+        
+        .app-container { 
+            display: flex; 
+            height: 100vh; 
+        }
+
+        .sidebar { 
+            width: 270px; background: var(--maroon); 
+            color: white; 
+            border-right: 5px solid var(--gold);
+            display: flex; 
+            flex-direction: column; 
+        }
+        
+        .sidebar-header { 
+            padding: 25px 20px; 
+            text-align: center; 
+        }
+        
+        .sidebar-header h2 span { 
+            color: var(--gold); 
+        }
+
+        .voter-profile {
+            padding: 20px; text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            background: rgba(0,0,0,0.1);
+        }
+        
+        .profile-img {
+            width: 80px; height: 80px; border-radius: 50%;
+            border: 3px solid var(--gold); margin-bottom: 10px; object-fit: cover;
+        }
+        
+        .voter-name { 
+            font-weight: bold; 
+            font-size: 16px; 
+            display: block; 
+        }
+        
+        .voter-id { 
+            font-size: 11px; 
+            color: var(--gold); 
+            text-transform: uppercase; 
+            letter-spacing: 1px; 
+        }
+
+        .nav-links { 
+            flex-grow: 1; 
+            margin-top: 10px; 
+        }
+        
+        .nav-item { 
+            padding: 15px 30px; 
+            cursor: pointer; 
+            display: flex;
+            align-items: center; 
+            gap: 12px; 
+            font-size: 14px; 
+            transition: 0.3s; opacity: 0.8;
+        }
+        
+        .nav-item:hover, .nav-item.active {
+            opacity: 1; 
+            background: rgba(0,0,0,0.15); 
+            color: var(--gold); 
+        }
+        
+        .nav-item.active { 
+            border-left: 5px solid var(--gold); 
+            font-weight: bold; 
+        }
+
+        .logout-section { 
+            padding: 20px; 
+            border-top: 1px solid rgba(255,255,255,0.1); 
+        }
+
+        .btn-logout {
+            width: 100%; 
+            padding: 12px;
+            background: rgba(255,255,255,0.1); 
+            color: white;
+            border: 1px solid rgba(255,255,255,0.2); 
+            border-radius: 6px;
+            cursor: pointer; 
+            display: flex; 
+            align-items: center;
+            justify-content: center; 
+            gap: 10px; 
+            transition: 0.3s;
+        }
+        .btn-logout:hover { 
+            background: var(--danger); 
+            border-color: var(--danger); 
+        }
+
+        .main-content { 
+            flex: 1; 
+            padding: 30px; 
+            overflow-y: auto; 
+        }
+       
+        .page-title { 
+            font-size: 24px; 
+            margin-bottom: 25px; 
+            border-left: 5px solid var(--maroon);
+            padding-left: 15px; 
+        }
+
+        .card { 
+            background: white; 
+            padding: 20px; 
+            border-radius: 12px; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05); 
+            margin-bottom: 20px; 
+        }
+        
+        .card-title { 
+            font-size: 14px; 
+            color: var(--maroon); 
+            margin-bottom: 15px; 
+            text-transform: uppercase; 
+            font-weight: bold; 
+        }
+
+        .modal-overlay {
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6); 
+            display: none;
+            justify-content: center; 
+            align-items: center; 
+            z-index: 9999;
+        }
+        
+        .logout-modal {
+            background: white; 
+            padding: 30px; 
+            border-radius: 12px;
+            width: 380px; 
+            text-align: center; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            animation: modalPop 0.3s ease-out;
+        }
+      
+        @keyframes modalPop { 
+            from { 
+                transform: scale(0.8); 
+                opacity: 0; 
+            } 
+            to { 
+                transform: scale(1); 
+                opacity: 1; 
+            } 
+        }
+       
+        .modal-icon { 
+            font-size: 50px; 
+            color: var(--danger); 
+            margin-bottom: 15px; 
+        }
+        
+        .modal-title { 
+            font-size: 20px; 
+            font-weight: bold; 
+            color: #1f2937; 
+            margin-bottom: 10px; 
+        }
+        
+        .modal-text { 
+            font-size: 14px; 
+            color: #6b7280; 
+            line-height: 1.5; 
+            margin-bottom: 25px; 
+        }
+        
+        .modal-btns { 
+            display: flex; 
+            gap: 12px; 
+            justify-content: center; 
+        }
+        
+        .btn-no { 
+            padding: 10px 20px; 
+            border-radius: 6px; 
+            border: 1px solid #d1d5db; 
+            background: white; 
+            cursor: pointer; 
+            font-weight: 600; 
+            flex: 1; 
+        }
+        
+        .btn-yes { 
+            padding: 10px 20px; 
+            border-radius: 6px; 
+            border: none; 
+            background: var(--danger); 
+            color: white; 
+            cursor: pointer; 
+            font-weight: 600; 
+            flex: 1; 
+        }
+
+        .btn-primary { 
+            background: var(--maroon); 
+            color: white; 
+            border: none; 
+            padding: 12px 20px; 
+            border-radius: 6px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            transition: 0.3s;
+        }
+
+        .btn-primary:hover {
+            background: #5a0000;
+        }
+
+        .election-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .election-btn {
+            padding: 10px 20px;
+            border: 2px solid var(--maroon);
+            background: white;
+            color: var(--maroon);
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .election-btn:hover, .election-btn.active {
+            background: var(--maroon);
+            color: white;
+        }
+
+        .position-results {
+            margin-bottom: 30px;
+        }
+
+        .position-title {
+            background: var(--maroon);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px 8px 0 0;
+            font-size: 18px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .results-list {
+            background: white;
+            border-radius: 0 0 8px 8px;
+            overflow: hidden;
+        }
+
+        .result-item {
+            display: flex;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid #e5e7eb;
+            transition: 0.3s;
+        }
+
+        .result-item:hover {
+            background: #f9fafb;
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+        }
+
+        .rank-badge {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 18px;
+            margin-right: 20px;
+        }
+
+        .rank-1 {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: white;
+        }
+
+        .rank-2 {
+            background: linear-gradient(135deg, #C0C0C0, #808080);
+            color: white;
+        }
+
+        .rank-3 {
+            background: linear-gradient(135deg, #CD7F32, #8B4513);
+            color: white;
+        }
+
+        .rank-other {
+            background: #e5e7eb;
+            color: #6b7280;
+        }
+
+        .candidate-info {
+            flex: 1;
+        }
+
+        .candidate-name-result {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--maroon);
+            margin-bottom: 5px;
+        }
+
+        .candidate-party-result {
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        .vote-stats {
+            text-align: right;
+        }
+
+        .vote-count {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--maroon);
+        }
+
+        .vote-percentage {
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        .progress-bar {
+            width: 200px;
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--maroon);
+            transition: width 0.5s ease;
+        }
+
+        .total-votes {
+            background: #f9fafb;
+            padding: 15px 20px;
+            border-top: 2px solid #e5e7eb;
+            font-size: 14px;
+            color: #6b7280;
+            text-align: center;
+        }
+
+        .winner-crown {
+            color: var(--gold);
+            margin-left: 10px;
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="modal-overlay" id="logoutModal">
+        <div class="logout-modal">
+            <i class="fas fa-exclamation-circle modal-icon"></i>
+            <div class="modal-title">Logout Confirmation</div>
+            <p class="modal-text">Are you sure you want to log out?</p>
+            <div class="modal-btns">
+                <button class="btn-no" onclick="closeLogoutModal()">Cancel</button>
+                <button class="btn-yes" onclick="confirmLogout()">Yes, Logout</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-header"><h2>E-VOTE <span>VOTER</span></h2></div>
+            <div class="voter-profile">
+                <img src="https://ui-avatars.com/api/?name=Juan+Dela+Cruz&background=FFC107&color=7b0000" class="profile-img">
+                <span class="voter-name">Juan Dela Cruz</span>
+                <span class="voter-id">Student ID: 2024-001</span>
+            </div>
+            <nav class="nav-links">
+                <div class="nav-item" onclick="location.href='voter-dashboard.html'"><i class="fas fa-home"></i> Dashboard</div>
+                <div class="nav-item" onclick="location.href='voter-vote.html'"><i class="fas fa-vote-yea"></i> Vote Now</div>
+                <div class="nav-item active"><i class="fas fa-chart-line"></i> Leading</div>
+            </nav>
+            <div class="logout-section">
+                <button class="btn-logout" onclick="openLogoutModal()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <h1 class="page-title">Leading Candidates</h1>
+            
+            <div class="card" style="margin-bottom: 15px;">
+                <p><i class="fas fa-info-circle" style="color: var(--maroon);"></i> <strong>Note:</strong> Results are updated in real-time during the election period.</p>
+            </div>
+
+            <!-- Election Selector -->
+            <div class="election-selector" th:if="${elections != null and !elections.isEmpty()}">
+                <button class="election-btn" 
+                        th:each="election, iterStat : ${elections}"
+                        th:classappend="${iterStat.index == 0} ? 'active' : ''"
+                        th:text="${election.title}"
+                        th:onclick="'selectElection(this, ' + ${election.id} + ')'">
+                    Election Name
+                </button>
+            </div>
+
+            <!-- Dynamic Position Results -->
+            <div class="position-results" th:each="position : ${positionResults}">
+                <div class="position-title">
+                    <i class="fas fa-user-tie"></i> <span th:text="${position.name}">Position</span>
+                </div>
+                <div class="results-list">
+                    <div class="result-item" th:each="result, iterStat : ${position.results}">
+                        <div class="rank-badge" 
+                             th:classappend="${iterStat.index == 0} ? 'rank-1' : (${iterStat.index == 1} ? 'rank-2' : (${iterStat.index == 2} ? 'rank-3' : 'rank-other'))">
+                            <span th:text="${iterStat.index + 1} + 'st'"></span>
+                        </div>
+                        <div class="candidate-info">
+                            <div class="candidate-name-result">
+                                <span th:text="${result.candidateName}">Candidate</span>
+                                <i class="fas fa-crown winner-crown" th:if="${iterStat.index == 0}"></i>
+                            </div>
+                            <div class="candidate-party-result" th:text="${result.party}">Party</div>
+                        </div>
+                        <div class="vote-stats">
+                            <div class="vote-count" th:text="${result.voteCount}">0</div>
+                            <div class="vote-percentage" th:text="${result.percentage + '%'}">0%</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" th:style="'width: ' + ${result.percentage} + '%;'"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="total-votes" th:if="${position.totalVotes != null}">
+                        <strong>Total Votes:</strong> <span th:text="${position.totalVotes}">0</span> | 
+                        <strong>Voter Turnout:</strong> <span th:text="${position.turnout + '%'}">0%</span>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function selectElection(btn, electionId) {
+            document.querySelectorAll('.election-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            // Reload page with selected election
+            window.location.href = 'voter-leading.html?electionId=' + electionId;
+        }
+
+        function openLogoutModal() { document.getElementById('logoutModal').style.display = 'flex'; }
+        function closeLogoutModal() { document.getElementById('logoutModal').style.display = 'none'; }
+        function confirmLogout() { window.location.href = '/login'; }
+    </script>
+</body>
+</html>

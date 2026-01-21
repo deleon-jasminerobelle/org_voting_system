@@ -1,0 +1,1 @@
+-- Data moved to data.sql to ensure loading

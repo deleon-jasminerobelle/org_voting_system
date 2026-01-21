@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy - E-VOTE System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --maroon: #7b0000;
+            --gold: #FFC107;
+            --bg: #f3f4f6;
+            --white: #ffffff;
+            --dark: #1f2937;
+        }
+
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+            font-family: 'Inter', sans-serif; 
+        }
+        
+        body { 
+            background: var(--bg); 
+            color: var(--dark); 
+        }
+
+        /* Navigation */
+        .navbar {
+            background: var(--maroon);
+            padding: 15px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            color: var(--white);
+        }
+
+        .logo span {
+            color: var(--gold);
+        }
+
+        .back-link {
+            color: var(--white);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.3s;
+        }
+
+        .back-link:hover {
+            color: var(--gold);
+        }
+
+        /* Content */
+        .container {
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 0 20px;
+        }
+
+        .policy-card {
+            background: var(--white);
+            padding: 50px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border-top: 5px solid var(--maroon);
+        }
+
+        .policy-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .policy-header h1 {
+            font-size: 36px;
+            color: var(--maroon);
+            margin-bottom: 10px;
+        }
+
+        .policy-header .date {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .section {
+            margin-bottom: 35px;
+        }
+
+        .section h2 {
+            font-size: 24px;
+            color: var(--maroon);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section h3 {
+            font-size: 18px;
+            color: var(--maroon);
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        .section p {
+            line-height: 1.8;
+            color: #374151;
+            margin-bottom: 15px;
+        }
+
+        .section ul {
+            margin-left: 25px;
+            margin-bottom: 15px;
+        }
+
+        .section li {
+            line-height: 1.8;
+            color: #374151;
+            margin-bottom: 8px;
+        }
+
+        .highlight-box {
+            background: #fef3c7;
+            border-left: 4px solid var(--gold);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 6px;
+        }
+
+        .highlight-box p {
+            margin: 0;
+            color: #92400e;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--maroon);
+            color: var(--white);
+            padding: 30px 50px;
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 15px 20px;
+            }
+
+            .policy-card {
+                padding: 30px 20px;
+            }
+
+            .policy-header h1 {
+                font-size: 28px;
+            }
+
+            .section h2 {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="logo">E-VOTE <span>SYSTEM</span></div>
+        <a href="/" class="back-link">
+            <i class="fas fa-arrow-left"></i> Back to Home
+        </a>
+    </nav>
+
+    <!-- Content -->
+    <div class="container">
+        <div class="policy-card">
+            <div class="policy-header">
+                <h1><i class="fas fa-shield-alt"></i> Privacy Policy</h1>
+                <p class="date">Last Updated: January 19, 2026</p>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-info-circle"></i> Introduction</h2>
+                <p>Welcome to E-VOTE System. We are committed to protecting your privacy and ensuring the security of your personal information. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our online voting platform.</p>
+                <p>By using E-VOTE System, you agree to the collection and use of information in accordance with this policy. If you do not agree with our policies and practices, please do not use our service.</p>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-database"></i> Information We Collect</h2>
+                
+                <h3>Personal Information</h3>
+                <p>When you register for an account, we collect the following information:</p>
+                <ul>
+                    <li><strong>Student Number:</strong> Your unique identification number</li>
+                    <li><strong>Full Name:</strong> Your legal name as registered with the institution</li>
+                    <li><strong>Email Address:</strong> For account verification and communication</li>
+                    <li><strong>Password:</strong> Encrypted and securely stored for account access</li>
+                </ul>
+
+                <h3>Voting Information</h3>
+                <ul>
+                    <li><strong>Vote Records:</strong> Your voting choices are recorded anonymously</li>
+                    <li><strong>Voting Timestamp:</strong> Date and time when you cast your vote</li>
+                    <li><strong>Election Participation:</strong> Which elections you have participated in</li>
+                </ul>
+
+                <h3>Technical Information</h3>
+                <ul>
+                    <li><strong>IP Address:</strong> For security and fraud prevention</li>
+                    <li><strong>Browser Type:</strong> To ensure compatibility</li>
+                    <li><strong>Device Information:</strong> For security monitoring</li>
+                    <li><strong>Login History:</strong> To detect unauthorized access</li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-lock"></i> How We Use Your Information</h2>
+                <p>We use the collected information for the following purposes:</p>
+                <ul>
+                    <li><strong>Account Management:</strong> To create and maintain your voting account</li>
+                    <li><strong>Election Administration:</strong> To verify voter eligibility and prevent duplicate voting</li>
+                    <li><strong>Security:</strong> To protect against fraud, unauthorized access, and ensure election integrity</li>
+                    <li><strong>Communication:</strong> To send election notifications, reminders, and important updates</li>
+                    <li><strong>Analytics:</strong> To improve our service and user experience (aggregated data only)</li>
+                    <li><strong>Legal Compliance:</strong> To comply with applicable laws and regulations</li>
+                </ul>
+            </div>
+
+            <div class="highlight-box">
+                <p><strong><i class="fas fa-user-secret"></i> Vote Anonymity Guarantee:</strong> Your vote is completely anonymous. We use advanced encryption and separation techniques to ensure that your voting choices cannot be linked to your identity. Once you cast your vote, it is immediately anonymized and cannot be traced back to you.</p>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-shield-alt"></i> Data Security</h2>
+                <p>We implement industry-standard security measures to protect your information:</p>
+                <ul>
+                    <li><strong>Encryption:</strong> All data is encrypted in transit (SSL/TLS) and at rest</li>
+                    <li><strong>Secure Storage:</strong> Passwords are hashed using advanced cryptographic algorithms</li>
+                    <li><strong>Access Control:</strong> Strict access controls limit who can view your information</li>
+                    <li><strong>Regular Audits:</strong> Security audits and vulnerability assessments are conducted regularly</li>
+                    <li><strong>Backup Systems:</strong> Regular backups ensure data integrity and availability</li>
+                    <li><strong>Monitoring:</strong> 24/7 security monitoring to detect and prevent unauthorized access</li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-share-alt"></i> Information Sharing</h2>
+                <p>We do not sell, trade, or rent your personal information to third parties. We may share your information only in the following circumstances:</p>
+                <ul>
+                    <li><strong>Election Officials:</strong> Authorized election administrators may access voter lists to verify eligibility</li>
+                    <li><strong>Legal Requirements:</strong> When required by law, court order, or government regulation</li>
+                    <li><strong>Security Purposes:</strong> To investigate fraud, security breaches, or violations of our terms</li>
+                    <li><strong>Service Providers:</strong> Trusted third-party service providers who assist in operating our platform (under strict confidentiality agreements)</li>
+                </ul>
+                <p><strong>Important:</strong> Your actual voting choices are NEVER shared with anyone, including election officials. Only anonymized, aggregated voting results are made public.</p>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-user-check"></i> Your Rights</h2>
+                <p>You have the following rights regarding your personal information:</p>
+                <ul>
+                    <li><strong>Access:</strong> Request a copy of the personal information we hold about you</li>
+                    <li><strong>Correction:</strong> Request correction of inaccurate or incomplete information</li>
+                    <li><strong>Deletion:</strong> Request deletion of your account and personal data (subject to legal retention requirements)</li>
+                    <li><strong>Objection:</strong> Object to certain processing of your personal information</li>
+                    <li><strong>Data Portability:</strong> Request your data in a portable format</li>
+                    <li><strong>Withdraw Consent:</strong> Withdraw consent for data processing where applicable</li>
+                </ul>
+                <p>To exercise these rights, please contact our Data Protection Officer at privacy@evote-system.edu</p>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-clock"></i> Data Retention</h2>
+                <p>We retain your information for the following periods:</p>
+                <ul>
+                    <li><strong>Account Information:</strong> As long as your account is active</li>
+                    <li><strong>Voting Records:</strong> Anonymized voting data is retained permanently for election integrity and historical records</li>
+                    <li><strong>Login History:</strong> Retained for 2 years for security purposes</li>
+                    <li><strong>Deleted Accounts:</strong> Personal information is permanently deleted within 30 days of account closure</li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-cookie-bite"></i> Cookies and Tracking</h2>
+                <p>We use cookies and similar technologies to:</p>
+                <ul>
+                    <li>Maintain your login session</li>
+                    <li>Remember your preferences</li>
+                    <li>Analyze platform usage and performance</li>
+                    <li>Enhance security and prevent fraud</li>
+                </ul>
+                <p>You can control cookie settings through your browser, but disabling cookies may affect platform functionality.</p>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-child"></i> Age Restrictions</h2>
+                <p>E-VOTE System is intended for eligible voters within the institution. Users must meet the minimum age requirement as specified by the institution's election rules. We do not knowingly collect information from individuals who do not meet eligibility requirements.</p>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-edit"></i> Changes to This Policy</h2>
+                <p>We may update this Privacy Policy from time to time to reflect changes in our practices or legal requirements. We will notify you of any material changes by:</p>
+                <ul>
+                    <li>Posting the updated policy on our platform</li>
+                    <li>Sending an email notification to registered users</li>
+                    <li>Displaying a prominent notice on the login page</li>
+                </ul>
+                <p>Your continued use of E-VOTE System after changes are posted constitutes acceptance of the updated policy.</p>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-envelope"></i> Contact Us</h2>
+                <p>If you have questions, concerns, or requests regarding this Privacy Policy or our data practices, please contact us:</p>
+                <ul>
+                    <li><strong>Email:</strong> privacy@evote-system.edu</li>
+                    <li><strong>Data Protection Officer:</strong> dpo@evote-system.edu</li>
+                    <li><strong>Address:</strong> E-VOTE System Administration Office</li>
+                </ul>
+            </div>
+
+            <div class="highlight-box">
+                <p><strong><i class="fas fa-check-circle"></i> Our Commitment:</strong> We are committed to maintaining the highest standards of data protection and election integrity. Your trust is essential to our mission of providing a secure, transparent, and accessible voting platform.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2026 E-VOTE System. All rights reserved.</p>
+    </footer>
+
+</body>
+</html>

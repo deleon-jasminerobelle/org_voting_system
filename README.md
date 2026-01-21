@@ -1,1 +1,1 @@
-# org_voting_system
+# Organization Voting System
