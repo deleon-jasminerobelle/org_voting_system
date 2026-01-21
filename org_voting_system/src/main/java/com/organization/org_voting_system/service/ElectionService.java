@@ -77,4 +77,12 @@ public class ElectionService {
     public Election findById(Long id) {
         return electionRepository.findById(id).orElse(null);
     }
+
+    public void closeElection(Long id) {
+        Election election = electionRepository.findById(id).orElse(null);
+        if (election != null) {
+            election.setStatus(Election.Status.CLOSED);
+            electionRepository.save(election);
+        }
+    }
 }

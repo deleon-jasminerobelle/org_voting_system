@@ -1,5 +1,6 @@
 package com.organization.org_voting_system.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,40 +25,63 @@ public class UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    /**
+     * ✅ REGISTER USER
+     * All newly registered users are AUTOMATICALLY VOTERS
+     */
     public User registerUser(User user) {
+
+        // Encode password
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+        // Build full name
         String firstName = user.getFirstName() != null ? user.getFirstName() : "";
         String middleName = user.getMiddleName();
         String lastName = user.getLastName() != null ? user.getLastName() : "";
-        user.setFullName(firstName + (middleName != null && !middleName.trim().isEmpty() ? " " + middleName : "") + " " + lastName);
-        Role voterRole = roleRepository.findByName("ROLE_VOTER");
-        if (voterRole == null) {
-            voterRole = new Role(Role.RoleName.ROLE_VOTER);
-            roleRepository.save(voterRole);
-        }
+
+        user.setFullName(
+            firstName +
+            (middleName != null && !middleName.trim().isEmpty() ? " " + middleName : "") +
+            " " + lastName
+        );
+
+        // ✅ ALWAYS ASSIGN ROLE_VOTER
+        Role voterRole = roleRepository
+                .findByRoleName(Role.RoleName.ROLE_VOTER)
+                .orElseGet(() -> {
+                    Role role = new Role(Role.RoleName.ROLE_VOTER);
+                    return roleRepository.save(role);
+                });
+
         user.setRole(voterRole);
-        user.setCreatedAt(java.time.LocalDateTime.now());
-        user.setHasVoted(false);
+
+        // Default values
         user.setIsActive(true);
+        user.setHasVoted(false);
+        user.setCreatedAt(LocalDateTime.now());
+
         return userRepository.save(user);
+    }
+
+    // ================= FINDERS =================
+
+    public Optional<User> findByUsernameOptional(String username) {
+        return userRepository.findByUsername(username);
+    }
+
+    public Optional<User> findByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
 
     public Optional<User> findByStudentNumber(String studentNumber) {
         return userRepository.findByStudentNumber(studentNumber);
     }
 
-    public Optional<User> findByUsernameOptional(String username) {
-        return userRepository.findByUsername(username);
-    }
-    
-    // Method for voter functionality
     public User findByUsername(String username) {
         return userRepository.findByUsername(username).orElse(null);
     }
 
-    public Optional<User> findByEmail(String email) {
-        return userRepository.findByEmail(email);
-    }
+    // ================= CRUD =================
 
     public List<User> getAllUsers() {
         return userRepository.findAll();
@@ -70,6 +94,8 @@ public class UserService {
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
     }
+
+    // ================= VALIDATION =================
 
     public boolean existsByStudentNumber(String studentNumber) {
         return userRepository.existsByStudentNumber(studentNumber);

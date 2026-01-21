@@ -19,36 +19,38 @@ public class CustomUserDetailsService implements UserDetailsService {
     private UserService userService;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String username)
+            throws UsernameNotFoundException {
 
         User user = userService.findByUsernameOptional(username)
                 .orElse(userService.findByEmail(username)
                 .orElseThrow(() ->
                         new UsernameNotFoundException("User not found: " + username)));
 
-        // Get role safely and normalize
-        String roleName = (user.getRole() != null) ? user.getRole().getRoleName().name() : "voter";
-        roleName = roleName.toUpperCase().replace("-", "_"); // for ELECTION_OFFICER
+        if (user.getRole() == null) {
+            throw new RuntimeException("User has NO ROLE assigned");
+        }
 
-        // Debug logs (optional)
+        // ✅ ROLE IS ROLE_ADMIN / ROLE_VOTER / ROLE_ELECTION_OFFICER
+        String authority = user.getRole().getRoleName().name();
+
+        // ✅ DEBUG (KEEP TEMPORARILY)
         System.out.println("==== AUTH DEBUG ====");
         System.out.println("Username: " + user.getUsername());
-        System.out.println("Active: " + user.getIsActive());
-        System.out.println("Role from DB: " + roleName);
-        System.out.println("Granted Authority: " + roleName);
+        System.out.println("Enabled: " + user.getIsActive());
+        System.out.println("Granted Authority: " + authority);
         System.out.println("====================");
 
-        // Build Spring Security user
         return new org.springframework.security.core.userdetails.User(
-                user.getUsername(),
-                user.getPassword(),       // hashed password
-                user.getIsActive(),           // enabled
-                true,                         // accountNonExpired
-                true,                         // credentialsNonExpired
-                true,                         // accountNonLocked
-                Collections.singletonList(
-                        new SimpleGrantedAuthority(roleName)
-                )
-        );
+        user.getUsername(),
+        user.getPassword(),
+        user.getIsActive(),
+        true,
+        true,
+        true,
+        Collections.singletonList(
+                new SimpleGrantedAuthority(authority)
+        )
+);
     }
 }

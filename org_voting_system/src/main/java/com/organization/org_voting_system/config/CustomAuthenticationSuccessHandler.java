@@ -19,9 +19,8 @@ public class CustomAuthenticationSuccessHandler
             HttpServletResponse response,
             Authentication authentication) throws IOException {
 
-        authentication.getAuthorities().forEach(a ->
-            System.out.println("AUTHORITY: " + a.getAuthority())
-        );
+        System.out.println("Authorities:");
+        authentication.getAuthorities().forEach(a -> System.out.println(a.getAuthority()));
 
         if (authentication.getAuthorities().stream()
                 .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {

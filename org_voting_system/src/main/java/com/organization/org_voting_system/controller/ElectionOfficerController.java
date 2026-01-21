@@ -37,6 +37,6 @@ public class ElectionOfficerController {
         model.addAttribute("user", currentUser);
         model.addAttribute("allElections", allElections);
 
-        return "election_officer.html";
+        return "election-officer.html";
     }
 }
