@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.organization.org_voting_system.entity.Candidate;
+import com.organization.org_voting_system.entity.Election;
 import com.organization.org_voting_system.entity.Position;
 import com.organization.org_voting_system.repository.CandidateRepository;
 
@@ -40,5 +41,9 @@ public class CandidateService {
 
     public boolean existsById(Long id) {
         return candidateRepository.existsById(id);
+    }
+    
+    public List<Candidate> findByElection(Election election) {
+        return candidateRepository.findByPositionElection(election);
     }
 }

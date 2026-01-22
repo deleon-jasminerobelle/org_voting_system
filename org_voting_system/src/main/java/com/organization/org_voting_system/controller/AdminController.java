@@ -485,8 +485,8 @@ public class AdminController {
     @PostMapping("/backup")
     public String backupDatabase(RedirectAttributes redirectAttributes) {
         try {
-            // Create backup directory if it doesn't exist
-            Path backupDir = Paths.get("backups");
+            // Create backup directory with absolute path
+            Path backupDir = Paths.get(System.getProperty("user.dir"), "backups");
             Files.createDirectories(backupDir);
 
             // Generate backup filename with timestamp
@@ -543,7 +543,7 @@ public class AdminController {
             if (exitCode == 0) {
                 long fileSize = Files.size(backupFilePath);
                 redirectAttributes.addFlashAttribute("success", 
-                    "Database backup created successfully: " + backupFileName + " (" + formatFileSize(fileSize) + ")");
+                    "Database backup created successfully: " + backupFileName + " (" + formatFileSize(fileSize) + ")\nLocation: " + backupFilePath.toAbsolutePath());
             } else {
                 // Read error stream if available
                 String errorMsg = "Backup failed with exit code: " + exitCode;
