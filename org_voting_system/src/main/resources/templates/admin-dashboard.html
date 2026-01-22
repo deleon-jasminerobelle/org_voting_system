@@ -1011,10 +1011,26 @@
         </form>
 
         <h6>Database Restore</h6>
-        <form th:action="@{/admin/restore}" method="post" class="mb-4">
+        <form th:action="@{/admin/restore}" method="post" class="mb-4" enctype="multipart/form-data">
           <div class="mb-3">
-            <label for="backupFile" class="form-label">Backup File Path</label>
-            <input type="text" class="form-control" id="backupFile" name="backupFile" placeholder="Enter backup file path" required>
+            <label for="file" class="form-label">Select SQL File</label>
+            <input type="file" class="form-control" id="file" name="file" accept=".sql,.zip" required>
+            <small class="form-text text-muted">Supported formats: .sql, .zip</small>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Restore Mode</label>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="mergeMode" id="merge" value="merge" checked>
+              <label class="form-check-label" for="merge">
+                Merge (Keep existing data, add new records)
+              </label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="mergeMode" id="overwrite" value="overwrite">
+              <label class="form-check-label" for="overwrite">
+                Overwrite (Replace all data with backup)
+              </label>
+            </div>
           </div>
           <button type="submit" class="btn btn-danger">Restore Database</button>
         </form>

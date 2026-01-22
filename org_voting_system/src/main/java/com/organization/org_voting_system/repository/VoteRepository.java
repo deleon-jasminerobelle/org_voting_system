@@ -32,4 +32,7 @@ public interface VoteRepository extends JpaRepository<Vote, Long> {
     
     @Query("SELECT COUNT(v) FROM Vote v WHERE v.election.electionId = :electionId AND v.position.positionId = :positionId AND v.candidate.candidateId = :candidateId")
     Long countVotesByElectionPositionAndCandidate(@Param("electionId") Long electionId, @Param("positionId") Long positionId, @Param("candidateId") Long candidateId);
+    
+    @Query("SELECT COUNT(v) FROM Vote v WHERE v.candidate.candidateId = :candidateId")
+    Long countVotesByCandidate(@Param("candidateId") Long candidateId);
 }

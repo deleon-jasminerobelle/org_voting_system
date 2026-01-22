@@ -115,6 +115,10 @@ public class VoteService {
 
         Vote vote = new Vote(election, candidate.getPosition(), candidate, user, voteHash, voterToken);
         voteRepository.save(vote);
+        
+        // Update user's has_voted flag
+        user.setHasVoted(true);
+        userRepository.save(user);
     }
     
     public List<Election> getElectionsVotedByUser(Long userId) {
@@ -127,5 +131,9 @@ public class VoteService {
 
     public Long getTotalVotesForPosition(Long electionId, Long positionId) {
         return voteRepository.countVotesByElectionAndPosition(electionId, positionId);
+    }
+    
+    public Long getVoteCountForCandidate(Long candidateId) {
+        return voteRepository.countVotesByCandidate(candidateId);
     }
 }

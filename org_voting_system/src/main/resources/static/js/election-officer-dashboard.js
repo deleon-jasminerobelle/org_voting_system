@@ -6,6 +6,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Set up event listeners
     setupEventListeners();
+    
+    // Add styles for messages
+    addMessageStyles();
 });
 
 function initializeDashboard() {
@@ -234,11 +237,93 @@ function loadBackupRestoreContent() {
         .then(response => response.text())
         .then(html => {
             document.getElementById('content').innerHTML = html;
+            
+            // Attach event listeners to backup and restore forms
+            const backupForm = document.querySelector('form[action="/election-officer/backup"]');
+            if (backupForm) {
+                backupForm.addEventListener('submit', handleBackupSubmit);
+            }
+            
+            const restoreForm = document.querySelector('form[action="/election-officer/restore"]');
+            if (restoreForm) {
+                restoreForm.addEventListener('submit', handleRestoreSubmit);
+            }
         })
         .catch(error => {
             console.error('Error loading backup restore content:', error);
             document.getElementById('content').innerHTML = '<p>Error loading content. Please try again.</p>';
         });
+}
+
+function handleBackupSubmit(e) {
+    e.preventDefault();
+    
+    const button = e.target.querySelector('button[type="submit"]');
+    const originalText = button.textContent;
+    button.textContent = 'Creating backup...';
+    button.disabled = true;
+    
+    fetch('/election-officer/backup', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        }
+    })
+    .then(response => {
+        if (response.ok) {
+            showMessage('Database backup created successfully!', 'success');
+            // Reload after showing message
+            setTimeout(() => location.reload(), 2000);
+        } else {
+            showMessage('Failed to create backup. Please try again.', 'error');
+            button.textContent = originalText;
+            button.disabled = false;
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showMessage('An error occurred: ' + error.message, 'error');
+        button.textContent = originalText;
+        button.disabled = false;
+    });
+}
+
+function handleRestoreSubmit(e) {
+    e.preventDefault();
+    
+    const fileInput = e.target.querySelector('input[name="file"]');
+    if (!fileInput.files.length) {
+        showMessage('Please select a file to restore', 'error');
+        return;
+    }
+    
+    const formData = new FormData(e.target);
+    const button = e.target.querySelector('button[type="submit"]');
+    const originalText = button.textContent;
+    button.textContent = 'Restoring...';
+    button.disabled = true;
+    
+    fetch('/election-officer/restore', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => {
+        if (response.ok) {
+            showMessage('Database restored successfully!', 'success');
+            // Reload after showing message
+            setTimeout(() => location.reload(), 2000);
+        } else {
+            showMessage('Failed to restore backup. Please try again.', 'error');
+            button.textContent = originalText;
+            button.disabled = false;
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showMessage('An error occurred: ' + error.message, 'error');
+        button.textContent = originalText;
+        button.disabled = false;
+    });
 }
 
 function loadUserManagementContent() {
@@ -251,4 +336,80 @@ function loadUserManagementContent() {
             console.error('Error loading user management content:', error);
             document.getElementById('content').innerHTML = '<p>Error loading content. Please try again.</p>';
         });
+}
+
+// Message display functions
+function addMessageStyles() {
+    if (document.getElementById('message-styles')) return;
+    
+    const style = document.createElement('style');
+    style.id = 'message-styles';
+    style.textContent = `
+        .message-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            max-width: 400px;
+            padding: 16px 20px;
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 9999;
+            animation: slideIn 0.3s ease-out;
+            font-weight: 500;
+        }
+        
+        .message-container.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .message-container.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .message-container.info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+        }
+    `;
+    document.head.appendChild(style);
+}
+
+function showMessage(message, type = 'info', duration = 5000) {
+    const container = document.createElement('div');
+    container.className = `message-container ${type}`;
+    container.textContent = message;
+    document.body.appendChild(container);
+    
+    // Auto-remove message after duration
+    setTimeout(() => {
+        container.style.animation = 'slideOut 0.3s ease-out';
+        setTimeout(() => container.remove(), 300);
+    }, duration);
 }
