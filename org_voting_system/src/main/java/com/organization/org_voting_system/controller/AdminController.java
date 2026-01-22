@@ -1,13 +1,26 @@
 package com.organization.org_voting_system.controller;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.Principal;
+import java.sql.Connection;
+import java.sql.Statement;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.sql.DataSource;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +31,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.organization.org_voting_system.entity.Candidate;
@@ -53,6 +67,21 @@ public class AdminController {
 
     @Autowired
     private PdfService pdfService;
+
+    @Autowired
+    private DataSource dataSource;
+
+    @Value("${spring.datasource.url}")
+    private String datasourceUrl;
+
+    @Value("${spring.datasource.username}")
+    private String datasourceUsername;
+
+    @Value("${spring.datasource.password}")
+    private String datasourcePassword;
+
+    @Value("${mysqldump.path:mysqldump}")
+    private String mysqldumpPath;
 
     @GetMapping("/dashboard")
     public String dashboard(Model model, Principal principal, @RequestParam(defaultValue = "dashboard") String activeSection) {
@@ -456,33 +485,253 @@ public class AdminController {
     @PostMapping("/backup")
     public String backupDatabase(RedirectAttributes redirectAttributes) {
         try {
-            // Simple backup implementation - in a real app, use proper database backup tools
-            String backupFile = "backup_" + LocalDateTime.now().toString().replace(":", "-") + ".sql";
-            // For H2 database, you might need to use SCRIPT command
-            // For MySQL, use mysqldump
-            // This is a placeholder - implement based on your database
-            redirectAttributes.addFlashAttribute("success", "Database backup created: " + backupFile);
+            // Create backup directory if it doesn't exist
+            Path backupDir = Paths.get("backups");
+            Files.createDirectories(backupDir);
+
+            // Generate backup filename with timestamp
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss");
+            String backupFileName = "backup_" + LocalDateTime.now().format(formatter) + ".sql";
+            Path backupFilePath = backupDir.resolve(backupFileName);
+
+            // Extract database name from connection URL
+            String dbName = extractDatabaseName(datasourceUrl);
+            String host = extractHostFromUrl(datasourceUrl);
+            String port = extractPortFromUrl(datasourceUrl);
+
+            // Build command list dynamically to avoid empty password arguments
+            java.util.List<String> command = new java.util.ArrayList<>();
+            command.add(mysqldumpPath);
+            command.add("-h");
+            command.add(host);
+            command.add("-P");
+            command.add(port);
+            command.add("-u");
+            command.add(datasourceUsername);
+            
+            // Only add password if it's not empty
+            if (datasourcePassword != null && !datasourcePassword.isEmpty()) {
+                command.add("-p" + datasourcePassword);
+            }
+            
+            command.add("--single-transaction");
+            command.add("--routines");
+            command.add("--triggers");
+            command.add(dbName);
+
+            // Create mysqldump command
+            ProcessBuilder processBuilder = new ProcessBuilder(command);
+            processBuilder.directory(new File("."));
+            processBuilder.redirectErrorStream(true);
+
+            // Execute mysqldump
+            Process process = processBuilder.start();
+            
+            // Read the output and write to file
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                 java.io.FileWriter writer = new java.io.FileWriter(backupFilePath.toFile())) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    writer.write(line);
+                    writer.write("\n");
+                }
+            }
+
+            // Wait for process to complete
+            int exitCode = process.waitFor();
+            
+            if (exitCode == 0) {
+                long fileSize = Files.size(backupFilePath);
+                redirectAttributes.addFlashAttribute("success", 
+                    "Database backup created successfully: " + backupFileName + " (" + formatFileSize(fileSize) + ")");
+            } else {
+                // Read error stream if available
+                String errorMsg = "Backup failed with exit code: " + exitCode;
+                try (BufferedReader errorReader = new BufferedReader(new InputStreamReader(process.getErrorStream()))) {
+                    String errorLine = errorReader.readLine();
+                    if (errorLine != null) {
+                        errorMsg += " - " + errorLine;
+                    }
+                }
+                redirectAttributes.addFlashAttribute("error", errorMsg);
+            }
+
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Failed to backup database: " + e.getMessage());
         }
         return "redirect:/admin/dashboard?activeSection=system-settings";
     }
 
+    /**
+     * Format file size to human readable format
+     */
+    private String formatFileSize(long bytes) {
+        if (bytes <= 0) return "0 B";
+        final String[] units = new String[]{"B", "KB", "MB", "GB"};
+        int digitGroups = (int) (Math.log10(bytes) / Math.log10(1024));
+        return String.format("%.2f %s", bytes / Math.pow(1024, digitGroups), units[digitGroups]);
+    }
+
+    /**
+     * Extract database name from JDBC URL
+     */
+    private String extractDatabaseName(String jdbcUrl) {
+        // Format: jdbc:mysql://host:port/dbname?...
+        int lastSlash = jdbcUrl.lastIndexOf("/");
+        int questionMark = jdbcUrl.indexOf("?", lastSlash);
+        if (questionMark == -1) {
+            return jdbcUrl.substring(lastSlash + 1);
+        }
+        return jdbcUrl.substring(lastSlash + 1, questionMark);
+    }
+
+    /**
+     * Extract host from JDBC URL
+     */
+    private String extractHostFromUrl(String jdbcUrl) {
+        // Format: jdbc:mysql://host:port/...
+        int start = jdbcUrl.indexOf("://") + 3;
+        int end = jdbcUrl.indexOf(":", start);
+        return jdbcUrl.substring(start, end);
+    }
+
+    /**
+     * Extract port from JDBC URL
+     */
+    private String extractPortFromUrl(String jdbcUrl) {
+        // Format: jdbc:mysql://host:port/...
+        int start = jdbcUrl.indexOf(":", jdbcUrl.indexOf("://") + 3) + 1;
+        int end = jdbcUrl.indexOf("/", start);
+        return jdbcUrl.substring(start, end);
+    }
+
     @PostMapping("/restore")
-    public String restoreDatabase(@RequestParam String backupFile, RedirectAttributes redirectAttributes) {
+    public String restoreDatabase(@RequestParam("file") MultipartFile uploadedFile, 
+                                 @RequestParam(value = "mergeMode", defaultValue = "merge") String mergeMode,
+                                 RedirectAttributes redirectAttributes) {
         try {
-            // Simple restore implementation - in a real app, use proper database restore tools
-            File file = new File(backupFile);
-            if (!file.exists()) {
-                redirectAttributes.addFlashAttribute("error", "Backup file not found!");
+            // Validate file
+            if (uploadedFile.isEmpty()) {
+                redirectAttributes.addFlashAttribute("error", "Please select a file to restore!");
                 return "redirect:/admin/dashboard?activeSection=system-settings";
             }
-            // Implement restore logic based on your database
-            redirectAttributes.addFlashAttribute("success", "Database restored from: " + backupFile);
+
+            // Check file extension
+            String filename = uploadedFile.getOriginalFilename();
+            if (filename == null || (!filename.endsWith(".sql") && !filename.endsWith(".zip"))) {
+                redirectAttributes.addFlashAttribute("error", "Invalid file format! Please upload .sql or .zip file.");
+                return "redirect:/admin/dashboard?activeSection=system-settings";
+            }
+
+            // Handle .sql file
+            if (filename.endsWith(".sql")) {
+                String sqlContent = new String(uploadedFile.getBytes(), StandardCharsets.UTF_8);
+                
+                if ("overwrite".equals(mergeMode)) {
+                    // Overwrite mode: clear tables first
+                    clearDatabase();
+                    redirectAttributes.addFlashAttribute("info", "Cleared existing data. Restoring from backup...");
+                }
+                
+                executeSqlStatements(sqlContent);
+                redirectAttributes.addFlashAttribute("success", "Database restored successfully from: " + filename);
+            } else {
+                redirectAttributes.addFlashAttribute("error", "ZIP file restore not yet implemented. Please use .sql files.");
+            }
+
+        } catch (IOException e) {
+            redirectAttributes.addFlashAttribute("error", "Failed to read file: " + e.getMessage());
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Failed to restore database: " + e.getMessage());
         }
         return "redirect:/admin/dashboard?activeSection=system-settings";
+    }
+
+    /**
+     * Clear all data from tables (for overwrite mode)
+     */
+    private void clearDatabase() throws Exception {
+        try (Connection conn = dataSource.getConnection()) {
+            try (Statement stmt = conn.createStatement()) {
+                // Order matters - delete from tables with foreign keys first
+                String[] clearCommands = {
+                    "DELETE FROM votes",
+                    "DELETE FROM password_reset_tokens",
+                    "DELETE FROM candidates",
+                    "DELETE FROM positions",
+                    "DELETE FROM elections",
+                    "DELETE FROM users",
+                    "DELETE FROM roles"
+                };
+                
+                for (String sql : clearCommands) {
+                    try {
+                        stmt.execute(sql);
+                    } catch (Exception e) {
+                        System.out.println("Warning while clearing: " + e.getMessage());
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Execute SQL statements from a SQL file content
+     */
+    private void executeSqlStatements(String sqlContent) throws Exception {
+        try (Connection conn = dataSource.getConnection()) {
+            // Set autocommit to false for better control
+            conn.setAutoCommit(false);
+            
+            try (Statement stmt = conn.createStatement()) {
+                // Split by semicolon to get individual statements
+                String[] statements = sqlContent.split(";");
+                
+                int executedCount = 0;
+                int skippedCount = 0;
+                
+                for (String sql : statements) {
+                    sql = sql.trim();
+                    
+                    // Skip empty statements, comments, and control statements
+                    if (sql.isEmpty() || sql.startsWith("--") || sql.startsWith("/*") || 
+                        sql.startsWith("/*!") || sql.startsWith("SET ") || 
+                        sql.startsWith("LOCK TABLES") || sql.startsWith("UNLOCK TABLES")) {
+                        skippedCount++;
+                        continue;
+                    }
+                    
+                    try {
+                        stmt.execute(sql);
+                        executedCount++;
+                        System.out.println("Executed SQL: " + sql.substring(0, Math.min(80, sql.length())).replaceAll("\\s+", " "));
+                    } catch (Exception e) {
+                        String errorMsg = e.getMessage() != null ? e.getMessage().toLowerCase() : "";
+                        
+                        // Ignore these types of errors - they're expected during restore
+                        if (errorMsg.contains("already exists") || 
+                            errorMsg.contains("duplicate entry") || 
+                            errorMsg.contains("duplicate key") ||
+                            errorMsg.contains("foreign key constraint") ||
+                            errorMsg.contains("primary key")) {
+                            // Log and continue - these are expected for merged restores
+                            System.out.println("Skipping duplicate/constraint error: " + e.getMessage());
+                            skippedCount++;
+                        } else {
+                            // Re-throw other errors
+                            System.err.println("ERROR: " + e.getMessage());
+                            System.err.println("Failed SQL: " + sql);
+                            throw e;
+                        }
+                    }
+                }
+                
+                System.out.println("Restore summary - Executed: " + executedCount + ", Skipped: " + skippedCount);
+            }
+            
+            // Commit all changes
+            conn.commit();
+        }
     }
 
     // ================= PDF EXPORT =================
