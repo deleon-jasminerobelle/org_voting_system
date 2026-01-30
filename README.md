@@ -1,8 +1,8 @@
-# 🗳 Organization Voting System
+# 🗳 Organization Voting System - EVOTE
 
-## 📌 System Title
 
-**E-VOTE*
+
+
 
 ---
 
