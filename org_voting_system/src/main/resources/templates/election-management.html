@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>E-VOTE ADMIN SYSTEM</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
     <style>
         :root {
@@ -13,6 +14,7 @@
             --bg: #f3f4f6;
             --white: #ffffff;
             --danger: #ef4444;
+            --success: #10b981;
         }
 
         * { 
@@ -50,10 +52,9 @@
             color: var(--gold); 
         }
 
-        .admin-profile {
-            padding: 20px; text-align: center;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            background: rgba(0,0,0,0.1);
+        .modern-table { 
+            width: 100%; 
+            border-collapse: collapse; 
         }
         
         .profile-img {
@@ -364,9 +365,9 @@
 
     <div class="modal-overlay" id="logoutModal">
         <div class="logout-modal">
-            <i class="fas fa-exclamation-circle modal-icon"></i>
-            <div class="modal-title">Logout Confirmation</div>
-            <p class="modal-text">Are you sure you want to log out?</p>
+            <i class="fas fa-exclamation-circle" style="font-size: 50px; color: var(--danger);"></i>
+            <h2 style="margin: 15px 0 10px;">Logout Confirmation</h2>
+            <p style="color: #6b7280; font-size: 14px;">Are you sure you want to log out?</p>
             <div class="modal-btns">
                 <button class="btn-no" onclick="closeLogoutModal()">Cancel</button>
                 <button class="btn-yes" onclick="confirmLogout()">Yes, Logout</button>
@@ -399,9 +400,9 @@
             <section id="dashboard" class="tab-content active">
                 <h1 class="page-title">Dashboard Overview</h1>
                 <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
-                    <div class="card center"><h3>0</h3><small>Candidates</small></div>
-                    <div class="card center"><h3>Not Set</h3><small>Schedule</small></div>
-                    <div class="card center"><div class="badge closed">CLOSED</div><br><small>Status</small></div>
+                    <div class="card" style="text-align:center"><h3>0</h3><small>Candidates</small></div>
+                    <div class="card" style="text-align:center"><h3>Not Set</h3><small>Schedule</small></div>
+                    <div class="card" style="text-align:center"><span id="dash-status-badge" style="background:var(--danger); color:white; padding:4px 12px; border-radius:20px; font-size:11px;">CLOSED</span><br><small>Status</small></div>
                 </div>
             </section>
 
@@ -413,11 +414,18 @@
                         <input type="text" id="el-title" placeholder="Election Title">
                         <input type="text" id="el-pos" placeholder="Position">
                         <input type="text" id="el-cand" placeholder="Candidate Name">
-                        <div class="date-group">
-                            <div class="date-field-container"><label>Start Date</label><input type="date" id="el-start"></div>
-                            <div class="date-field-container"><label>End Date</label><input type="date" id="el-end"></div>
+                        <div style="display:flex; gap:10px;">
+                            <input type="date" id="el-start">
+                            <input type="date" id="el-end">
                         </div>
-                        <button class="btn-primary">Save Candidate</button>
+                        <button class="btn-primary" onclick="saveCandidate()">Save Candidate</button>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3 class="card-title">Election Control Status</h3>
+                    <div style="display: flex; gap: 15px;">
+                        <button class="btn-open" onclick="updateStatus('OPEN')"><i class="fas fa-lock-open"></i> Open Election</button>
+                        <button class="btn-close" onclick="updateStatus('CLOSED')"><i class="fas fa-lock"></i> Close Election</button>
                     </div>
                 </div>
             </section>
@@ -426,15 +434,21 @@
                 <h1 class="page-title">Voter Registry</h1>
                 <div class="card">
                     <div class="form-row">
-                        <input type="text" placeholder="Student ID">
-                        <input type="text" placeholder="Full Name">
-                        <button class="btn-primary">Add Voter</button>
+                        <input type="text" id="v-id" placeholder="Student ID">
+                        <input type="text" id="v-name" placeholder="Full Name">
+                        <button class="btn-primary" onclick="addVoter()">Add Voter</button>
                     </div>
                 </div>
                 <div class="card">
                     <table class="modern-table">
                         <thead><tr><th>Student ID</th><th>Full Name</th><th>Action</th></tr></thead>
-                        <tbody><tr><td>2024-001</td><td>Juan Dela Cruz</td><td><button>Delete</button></td></tr></tbody>
+                        <tbody id="voter-table">
+                            <tr>
+                                <td>2024-001</td>
+                                <td>Juan Dela Cruz</td>
+                                <td><button style="color:var(--danger); border:none; background:none; cursor:pointer;" onclick="confirmDelete(this)">Delete</button></td>
+                            </tr>
+                        </tbody>
                     </table>
                 </div>
             </section>
@@ -452,8 +466,16 @@
             <section id="backup" class="tab-content">
                 <h1 class="page-title">System Backup</h1>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                    <div class="card center"><i class="fas fa-download big-icon"></i><h3>Export Database</h3><button class="btn-primary" style="margin-top:10px">Download .SQL</button></div>
-                    <div class="card center"><i class="fas fa-upload big-icon"></i><h3>Restore Data</h3><input type="file" style="margin-top:10px"></div>
+                    <div class="card" style="text-align:center">
+                        <i class="fas fa-download" style="font-size:50px; color:var(--maroon); margin-bottom:15px;"></i>
+                        <h3>Export Database</h3>
+                        <button class="btn-primary" style="margin-top:15px" onclick="exportDB()">Download .SQL</button>
+                    </div>
+                    <div class="card" style="text-align:center">
+                        <i class="fas fa-upload" style="font-size:50px; color:var(--maroon); margin-bottom:15px;"></i>
+                        <h3>Restore Data</h3>
+                        <input type="file" style="margin-top:15px" onchange="Swal.fire('Restoring', 'Processing database file...', 'info')">
+                    </div>
                 </div>
             </section>
 
@@ -461,8 +483,8 @@
                 <h1 class="page-title">User Management</h1>
                 <div class="card">
                     <div class="form-row">
-                        <input type="text" placeholder="Username">
-                        <button class="btn-primary">Create Admin</button>
+                        <input type="text" id="u-name" placeholder="Username">
+                        <button class="btn-primary" onclick="createAdmin()">Create Admin</button>
                     </div>
                 </div>
             </section>
@@ -475,6 +497,69 @@
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
             el.classList.add('active');
+        }
+
+        function confirmDelete(button) {
+            Swal.fire({
+                title: 'Are you sure you want to delete?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#7b0000',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    button.closest('tr').remove();
+                    Swal.fire(
+                        'Deleted!',
+                        'The voter has been removed.',
+                        'success'
+                    )
+                }
+            })
+        }
+
+        function updateStatus(status) {
+            const badge = document.getElementById('dash-status-badge');
+            if (status === 'OPEN') {
+                badge.style.background = 'var(--success)';
+                badge.innerText = 'OPEN';
+                Swal.fire('Election Started!', 'The system is now open for voting.', 'success');
+            } else {
+                badge.style.background = 'var(--danger)';
+                badge.innerText = 'CLOSED';
+                Swal.fire('Election Closed!', 'Voting access has been disabled.', 'warning');
+            }
+        }
+
+        function saveCandidate() {
+            const title = document.getElementById('el-title').value;
+            if (!title) { Swal.fire('Error!', 'Please fill up the candidate details.', 'error'); }
+            else { Swal.fire('Saved!', 'Candidate information recorded.', 'success'); }
+        }
+
+        function addVoter() {
+            const id = document.getElementById('v-id').value;
+            const name = document.getElementById('v-name').value;
+            if (!id || !name) { Swal.fire('Error!', 'Please enter Student ID and Name.', 'error'); }
+            else {
+                const row = `<tr><td>${id}</td><td>${name}</td><td><button style="color:var(--danger); border:none; background:none; cursor:pointer;" onclick="confirmDelete(this)">Delete</button></td></tr>`;
+                document.getElementById('voter-table').innerHTML += row;
+                Swal.fire('Success!', 'Voter added to the system.', 'success');
+                document.getElementById('v-id').value = ""; document.getElementById('v-name').value = "";
+            }
+        }
+
+        function exportDB() { Swal.fire('Exporting', 'Database backup is downloading...', 'success'); }
+
+        function createAdmin() {
+            const user = document.getElementById('u-name').value;
+            if (!user) { Swal.fire('Error!', 'Please enter a username.', 'error'); }
+            else { 
+                Swal.fire('Account Created', `Admin user "${user}" added.`, 'success'); 
+                document.getElementById('u-name').value = ""; 
+            }
         }
 
         function openLogoutModal() { document.getElementById('logoutModal').style.display = 'flex'; }
